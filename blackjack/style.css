@@ -1,0 +1,78 @@
+* {
+    margin: 0;
+}
+
+.container {
+    position: relative;
+    width: 80%;
+    margin: 0 auto;
+    height: 100%;
+}
+
+#dealer {
+    background-color: green;
+    height: 50vh;
+    width: 100%; 
+}
+
+#player {
+    background-color: greenyellow;
+    height: 50vh;
+    width: 100%;
+}
+
+.title {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 18px;
+}
+
+.score {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 18px;
+}
+
+.cards {
+    position: absolute;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin-left: 50px;
+}
+
+.card {
+    margin-left: -40px;
+}
+
+#buttons {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.button {
+    color: black;
+    font-size: 18px;
+    width: 150px;
+    height: 50px;
+    border: none;
+}
+
+.button:hover {
+    color: white;
+}
+
+#hitButton {
+    background-color: darkgreen;
+}
+
+#standButton {
+    background-color: red;
+}
+

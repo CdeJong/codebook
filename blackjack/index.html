@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 
+    
+    The value, one of A (for an ace), 2, 3, 4, 5, 6, 7, 8, 9, 0 (for a ten), J (jack), Q (queen), or K (king);
+    The suit, one of S (Spades), D (Diamonds), C (Clubs), or H (Hearts).
+
+    https://deckofcardsapi.com/static/img/<id>.png
+
+    
+    
+    -->
+
+    <div id="dealer">
+        <div class="container">
+            <div class="title">Dealer</div>
+            <div id="dealer-score" class="score">Score: 0</div>
+
+            <div class="cards">
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+            </div>
+        </div>
+    </div>    
+    <div id="player">
+        <div class="container">
+            <div class="title">Player</div>
+            <div id="player-score" class="score">Score: 0</div>
+
+            <div class="cards">
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+                <div class="card"><img src="https://deckofcardsapi.com/static/img/3S.png" alt="3A"></div>
+            </div>
+
+            <div id="buttons">
+                <button id="hitButton" class="button">Hit</button>
+                <button id="standButton" class="button">Stand</button>
+            </div>
+        </div>
+    </div>
+
+    
+    
+    <script src="script.js"></script>
+</body>
+</html>
