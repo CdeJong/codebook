@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Javascript Yahtzee</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+        </tr>
+        <tr>
+            <td class="diceResult">-</td>
+            <td class="diceResult">-</td>
+            <td class="diceResult">-</td>
+            <td class="diceResult">-</td>
+            <td class="diceResult">-</td>
+        </tr>
+    </table>
+
+    <br>
+    <button id="rollButton">Gooien!</button>
+    <br>
+
+    <table>
+        <tr>
+            <th>Getal</th>
+            <th>Aantal</th>
+            <th>Score</th>
+        </tr>
+        <tr>
+            <td>enen</td>
+            <td class="countResult">-</td>
+            <td class="scoreResult">-</td>
+        </tr>
+        <tr>
+            <td>tweeën</td>
+            <td class="countResult">-</td>
+            <td class="scoreResult">-</td>
+        </tr>
+        <tr>
+            <td>drieën</td>
+            <td class="countResult">-</td>
+            <td class="scoreResult">-</td>
+        </tr>
+        <tr>
+            <td>vieren</td>
+            <td class="countResult">-</td>
+            <td class="scoreResult">-</td>
+        </tr>
+        <tr>
+            <td>vijven</td>
+            <td class="countResult">-</td>
+            <td class="scoreResult">-</td>
+        </tr>
+        <tr>
+            <td>zessen</td>
+            <td class="countResult">-</td>
+            <td class="scoreResult">-</td>
+        </tr>
+    </table>
+
+    <br>
+
+    <table>
+        <tr>
+            <th>Categorie</th>
+            <th>Score</th>
+        </tr>
+        <tr>
+            <td>Chance</td>
+            <td id="chanceScoreResult">-</td>
+        </tr>
+        <tr>
+            <td>Three of a kind</td>
+            <td id="threeOfAKindScoreResult">-</td>
+        </tr>
+        <tr>
+            <td>Four of a kind</td>
+            <td id="fourOfAKindScoreResult">-</td>
+        </tr>
+        <tr>
+            <td>Full House</td>
+            <td id="fullHouseScoreResult">-</td>
+        </tr>
+        <tr>
+            <td>Small Straight</td>
+            <td id="smallStraightScoreResult">-</td>
+        </tr>
+        <tr>
+            <td>Large Straight</td>
+            <td id="largeStraightScoreResult">-</td>
+        </tr>
+        <tr>
+            <td>Yahtzee</td>
+            <td id="yahtzeeScoreResult">-</td>
+        </tr>
+    </table>
+
+    <script src="script.js"></script>
+</body>
+</html>
