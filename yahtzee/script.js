@@ -52,10 +52,10 @@ const handleClick = () => {
     chanceScoreResultElement.innerHTML = totalDots;
 
     let threeOfAKindResultElement = document.getElementById("threeOfAKindScoreResult");
-    threeOfAKindResultElement.innerHTML = scoreThreeOfAKind(countResult, totalDots);
+    threeOfAKindResultElement.innerHTML = scoreXOfAKind(3, countResult, totalDots);
 
     let fourOfAKindResultElement = document.getElementById("fourOfAKindScoreResult");
-    fourOfAKindResultElement.innerHTML = scoreFourOfAKind(countResult, totalDots);
+    fourOfAKindResultElement.innerHTML = scoreXOfAKind(4, countResult, totalDots);
 
     let fullHouseResultElement = document.getElementById("fullHouseScoreResult");
     fullHouseResultElement.innerHTML = scoreFullHouse(countResult);
@@ -67,7 +67,7 @@ const handleClick = () => {
     largeStraightResultElement.innerHTML = scoreLargeStraight(countResult);
 
     let yahtzeeResultElement = document.getElementById("yahtzeeScoreResult");
-    yahtzeeResultElement.innerHTML = scoreYahtzee(countResult);
+    yahtzeeResultElement.innerHTML = scoreXOfAKind(5, countResult, yahtzeeScore);
 
 }
 
@@ -108,20 +108,7 @@ const getTotalDots = (rollResult) => {
     return rollResult.reduce((accumulator, currentValue) => accumulator + currentValue);
 }
 
-const scoreThreeOfAKind = (countResult, totalDots = null) => {
-    return scoreXofAKind(3, countResult, totalDots);
-}
-
-const scoreFourOfAKind = (countResult, totalDots = null) => {
-    return scoreXofAKind(4, countResult, totalDots);
-}
-
-// technically it does not need the totalDots, but for "performance" it may be faster to just reuse the existing value.
-const scoreXofAKind = (amount, countResult, totalDots = null) => {
-    if (totalDots == null) {
-        throw new Error("I was to lazy to implement a method which calculates totalDots from countResult!");
-    }
-
+const scoreXOfAKind = (amount, countResult, score) => {
     let result = 0;
 
     for (let i = 1; i < countResult.length; i++) {
@@ -132,7 +119,7 @@ const scoreXofAKind = (amount, countResult, totalDots = null) => {
         }
 
         if (count >= amount) {
-            result = totalDots;
+            result = score;
             break;
         }
     }
@@ -187,23 +174,6 @@ const hasStraight = (length, countResult) => {
 
 }
 
-const scoreYahtzee = (countResult) => {
-    let score = 0;
-
-    for (let i = 1; i < countResult.length; i++) {
-        let count = countResult[i];
-
-        if (count == null || count === 0) {
-            continue;
-        } else if (count === 5) {
-            score = yahtzeeScore;
-        } 
-        break; // not 5 or 0
-    }
-
-    return score;
-}
-
 // debug
 
 const assert = (condition, message = null) => {
@@ -253,12 +223,12 @@ assertArray(countResult, [null, 1, 1, 1, 1, 1, null], "countDices failed #1");
 let totalDots = getTotalDots(rollResult);
 assert(totalDots == 15, "getTotalDots failed #1");
 
-assert(scoreThreeOfAKind(countResult, totalDots) == 0, "scoreThreeOfAKind failed #1");
-assert(scoreFourOfAKind(countResult, totalDots) == 0, "scoreFourOfAKind failed #1");
+assert(scoreXOfAKind(3, countResult, totalDots) == 0, "scoreThreeOfAKind failed #1");
+assert(scoreXOfAKind(4, countResult, totalDots) == 0, "scoreFourOfAKind failed #1");
 assert(scoreFullHouse(countResult) == 0, "scoreFullHouse failed #1");
 assert(scoreSmallStraight(countResult) == smallStraightScore, "scoreSmallStraight failed #1");
 assert(scoreLargeStraight(countResult) == largeStraightScore, "scoreLargeStraight failed #1");
-assert(scoreYahtzee(countResult) == 0, "scoreYahtzee failed #1");
+assert(scoreXOfAKind(5, countResult, yahtzeeScore) == 0, "scoreYahtzee failed #1");
 
 
 // TEST 2
@@ -269,12 +239,12 @@ assertArray(countResult, [null, null, 2, null, null, 3, null], "countDices faile
 totalDots = getTotalDots(rollResult);
 assert(totalDots == 19, "getTotalDots failed #2");
 
-assert(scoreThreeOfAKind(countResult, totalDots) == totalDots, "scoreThreeOfAKind failed #2");
-assert(scoreFourOfAKind(countResult, totalDots) == 0, "scoreFourOfAKind failed #2");
+assert(scoreXOfAKind(3, countResult, totalDots) == totalDots, "scoreThreeOfAKind failed #2");
+assert(scoreXOfAKind(4, countResult, totalDots) == 0, "scoreFourOfAKind failed #2");
 assert(scoreFullHouse(countResult) == fullHouseScore, "scoreFullHouse failed #2");
 assert(scoreSmallStraight(countResult) == 0, "scoreSmallStraight failed #2");
 assert(scoreLargeStraight(countResult) == 0, "scoreLargeStraight failed #2");
-assert(scoreYahtzee(countResult) == 0, "scoreYahtzee failed #2");
+assert(scoreXOfAKind(5, countResult, yahtzeeScore) == 0, "scoreYahtzee failed #2");
 
 
 // TEST 3
@@ -285,9 +255,9 @@ assertArray(countResult, [null, null, null, null, null, 5, null], "countDices fa
 totalDots = getTotalDots(rollResult);
 assert(totalDots == 25, "getTotalDots failed #3");
 
-assert(scoreThreeOfAKind(countResult, totalDots) == totalDots, "scoreThreeOfAKind failed #3");
-assert(scoreFourOfAKind(countResult, totalDots) == totalDots, "scoreFourOfAKind failed #3");
+assert(scoreXOfAKind(3, countResult, totalDots) == totalDots, "scoreThreeOfAKind failed #3");
+assert(scoreXOfAKind(4, countResult, totalDots) == totalDots, "scoreFourOfAKind failed #3");
 assert(scoreFullHouse(countResult) == 0, "scoreFullHouse failed #3");
 assert(scoreSmallStraight(countResult) == 0, "scoreSmallStraight failed #3");
 assert(scoreLargeStraight(countResult) == 0, "scoreLargeStraight failed #3");
-assert(scoreYahtzee(countResult) == yahtzeeScore, "scoreYahtzee failed #3");
+assert(scoreXOfAKind(5, countResult, yahtzeeScore) == yahtzeeScore, "scoreYahtzee failed #3");
