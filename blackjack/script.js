@@ -86,13 +86,9 @@ const scoreCards = (cards) => {
                     break;
                 default:
                     newScores.push(current + parseInt(type));          
-            }
-
-            console.log(newScores);
-            break; // todo loops for ever, debugging
-            scores = newScores;
+            } 
         }
-
+        scores = newScores;
     }
 
     return scores;
