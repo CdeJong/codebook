@@ -1,5 +1,6 @@
 * {
     margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .container {
@@ -49,6 +50,14 @@
     margin-left: -40px;
 }
 
+#winMessage {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 32px;
+}
+
 #buttons {
     position: absolute;
     bottom: 10px;
@@ -77,4 +86,13 @@
 #standButton {
     background-color: red;
 }
+
+#hitButton:disabled {
+    background-color: gray;
+}
+
+#standButton:disabled {
+    background-color: gray;
+}
+
 
