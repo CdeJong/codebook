@@ -5,6 +5,7 @@
 
 .container {
     position: relative;
+    max-width: 1000px;
     width: 80%;
     margin: 0 auto;
     height: 100%;
@@ -48,6 +49,7 @@
 
 .card {
     margin-left: -40px;
+    height: max(100px, 60%);
 }
 
 #winMessage {
