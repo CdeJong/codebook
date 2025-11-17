@@ -1,10 +1,25 @@
 
 const startAmount = 2;
+const allowPushAt = 16;
+const standAt = 17;
 const imageUrl = "https://deckofcardsapi.com/static/img/";
+const dealerDrawCardDelay = 1000; // ms
 
 let deckOfCards = [];
 let dealerCards = [];
 let playerCards = [];
+let isStarted = false;
+
+const winMessageElement = document.getElementById("winMessage");
+const hitButtonElement = document.getElementById("hitButton");
+const standButtonElement = document.getElementById("standButton");
+const dealerScoreElement = document.getElementById("dealerScore");
+const playerScoreElement = document.getElementById("playerScore");
+const dealerCardsElement = document.getElementById("dealerCards");
+const playerCardsElement = document.getElementById("playerCards");
+
+hitButtonElement.addEventListener("click", () => handleHitButtonClick());
+standButtonElement.addEventListener("click", () => handleStandButtonClick());
 
 const resetDeck = () => {
     // The value, one of A (for an ace), 2, 3, 4, 5, 6, 7, 8, 9, 0 (for a ten), J (jack), Q (queen), or K (king);
@@ -31,21 +46,14 @@ const handOutCards = () => {
         dealerCards.push(drawCard());
         playerCards.push(drawCard());
     }
-    updateView();
 }
 
 // todo move this, is it allowed to be a const?
 const cardTemplateElement = document.getElementById("cardTemplate");
 
 const updateView = (hideCard = true) => {
-    let dealerScoreElement = document.getElementById("dealerScore");
-    let playerScoreElement = document.getElementById("playerScore");
     updateScore(dealerScoreElement, dealerCards, hideCard);
     updateScore(playerScoreElement, playerCards);
-
-
-    let dealerCardsElement = document.getElementById("dealerCards");
-    let playerCardsElement = document.getElementById("playerCards");
 
     // clear current
     dealerCardsElement.innerHTML = "";
@@ -54,6 +62,7 @@ const updateView = (hideCard = true) => {
     for (let i = 0; i < dealerCards.length; i++) {
         let cardId = dealerCards[i];
 
+        // hide first card if needed
         if (hideCard && i == 0) {
             cardId = "back";
         }
@@ -129,7 +138,6 @@ const scoreCards = (cards) => {
     }
 
     // remove duplicates and invalid scores
-
     let finalScores = [];
     for (let score of scores) {
         if (score > 21) {
@@ -158,36 +166,17 @@ const updateCard = (id, element) => {
 const endGame = () => {
     updateView(false);
     hitButtonElement.innerHTML = "Start";
+    hitButtonElement.disabled = null;
     standButtonElement.disabled = "disabled";
     isStarted = false;
 }
-
-
-let isStarted = false;
-
-const winMessageElement = document.getElementById("winMessage");
-const hitButtonElement = document.getElementById("hitButton");
-hitButtonElement.addEventListener("click", () => handleHitButtonClick());
-const standButtonElement = document.getElementById("standButton");
-standButtonElement.addEventListener("click", () => handleStandButtonClick());
 
 const handleHitButtonClick = () => {
     if (isStarted) {
         handleHit();
     } else {
         handleStart();
-        isStarted = true;
     }
-    
-    // should the game stop
-
-    let playerScores = scoreCards(playerCards);
-
-    if (playerScores.length == 0) {
-        winMessageElement.innerHTML = "BUST";
-        endGame();
-    }
-
 }
 
 const handleStart = () => {
@@ -197,7 +186,7 @@ const handleStart = () => {
     dealerCards = [];
 
     handOutCards();
-    // todo check black jack
+    updateView();
 
     hitButtonElement.innerHTML = "Hit";
     standButtonElement.disabled = null;
@@ -210,17 +199,19 @@ const handleStart = () => {
 
     if (dealerHasBlackjack || playerHasBlackjack) {
         endGame();
+    } else {
+        isStarted = true; // no blackjack, set started so player can start hitting
+        return; // no need to handle win messages
     }
 
     if (dealerHasBlackjack && playerHasBlackjack) {
-        winMessageElement.innerHTML = "DRAW";
+        winMessageElement.innerHTML = "Push";
     } else if (dealerHasBlackjack) {
-        winMessageElement.innerHTML = "BLACKJACK FOR DEALER";
+        winMessageElement.innerHTML = "Dealer Blackjack, Dealer Wins";
     } else if (playerHasBlackjack) {
-        winMessageElement.innerHTML = "BLACKJACK";
+        winMessageElement.innerHTML = "Player Blackjack, Player Wins";
     }
 
-    
 }
 
 const handleHit = () => {
@@ -228,12 +219,20 @@ const handleHit = () => {
 
     let playerScores = scoreCards(playerCards);
 
-    if (playerScores.includes(21)) {
-        // auto stand
-        handleStandButtonClick();
-    } else {
-        updateView(true);
-    }
+    if (playerScores.length == 0) {
+        winMessageElement.innerHTML = "Player Bust, Dealer Wins";
+        endGame();
+        return;
+    } 
+    
+    updateView(true);
+
+    // just let the player click stand themselves
+    // if (playerScores.includes(21)) {
+    //     // auto stand
+    //     handleStandButtonClick();
+    // }
+    
 }
 
 const handleStandButtonClick = () => {
@@ -243,12 +242,13 @@ const handleStandButtonClick = () => {
     let playerScores = scoreCards(playerCards);
     let playerHighest = getHighestValidScore(playerScores);
 
-    dealerDrawCard(playerHighest);
+    updateView(false); // make card visible
+    dealerDrawCards(playerHighest); // start drawing cards if needed
 
 }
 
 const getHighestValidScore = (scores) => {
-    let highest = -1;
+    let highest = -1; // no valid score found, BUST
     
     for (let score of scores) {
         if (score > highest) {
@@ -259,26 +259,46 @@ const getHighestValidScore = (scores) => {
     return highest;
 }
 
-const dealerDrawCard = (playerHighest) => {
-    dealerCards.push(drawCard());
+const dealerDrawCards = (playerHighest) => {
 
     let dealerScores = scoreCards(dealerCards);
     let dealerHighest = getHighestValidScore(dealerScores);
 
-    if (playerHighest === 16 && dealerHighest === 16) {
-        // stop draw
+    // push is a draw/tie, currently set at 16
+    if (playerHighest === allowPushAt && dealerHighest === allowPushAt) {
+        winMessageElement.innerHTML = "Push";
+        endGame();
         return;
     }
 
-    if (dealerHighest !== -1 && dealerHighest < 17) {
-        // draw an card
-        setTimeout(() => dealerDrawCard(playerHighest), 500);
+    // no highest score found, so dealer went bust
+    if (dealerHighest === -1) {
+        winMessageElement.innerHTML = "Dealer Bust, Player Wins";
+        endGame();
+        return;
     }
-    updateView(false);
-    
+
+    // allow dealer to stand at, currently 17
+    if (dealerHighest >= standAt) {
+        if (playerHighest > dealerHighest) {
+            winMessageElement.innerHTML = "Player Wins";
+        } else if (playerHighest < dealerHighest) {
+            winMessageElement.innerHTML = "Dealer Wins";
+        } else {
+            winMessageElement.innerHTML = "Push";
+        }
+        endGame();
+        return;
+    }
+
+    // draw another card in 1s
+    setTimeout(() => {
+        dealerCards.push(drawCard());
+        updateView(false);
+
+        dealerDrawCards(playerHighest)
+    }, dealerDrawCardDelay);
 }
-
-
 
 
 // debug
