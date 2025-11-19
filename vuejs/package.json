@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "eslint-plugin-vue": "^10.5.1",
+    "typescript-eslint": "^8.47.0"
+  }
+}
