@@ -17,6 +17,7 @@ const dealerScoreElement = document.getElementById("dealerScore");
 const playerScoreElement = document.getElementById("playerScore");
 const dealerCardsElement = document.getElementById("dealerCards");
 const playerCardsElement = document.getElementById("playerCards");
+const cardTemplateElement = document.getElementById("cardTemplate");
 
 hitButtonElement.addEventListener("click", () => handleHitButtonClick());
 standButtonElement.addEventListener("click", () => handleStandButtonClick());
@@ -47,9 +48,6 @@ const handOutCards = () => {
         playerCards.push(drawCard());
     }
 }
-
-// todo move this, is it allowed to be a const?
-const cardTemplateElement = document.getElementById("cardTemplate");
 
 const updateView = (hideCard = true) => {
     updateScore(dealerScoreElement, dealerCards, hideCard);
