@@ -10,20 +10,15 @@ const newAge = ref(0);
 
 const addPerson = () => {
     const name = newName.value;
-    const age = newAge.value;
+    
     if (typeof name !== 'string' || name.trim().length == 0) {
-        return;
-    }
-
-    const finalAge = parseInt(age);
-
-    if (isNaN(finalAge)) {
         return;
     }
 
     newName.value = '';
     newAge.value = '';
-    people.value.push({name: name, age: age});
+    // parse int cant be NaN as its already validated in html, if there was a backend, that backend should validate it again
+    people.value.push({name: name, age: parseInt(newAge.value)});
 };
 
 const children = computed(() => {
@@ -60,7 +55,7 @@ const totalChildren = computed(() => children.value.length);
 
 
     <input type="text" v-model="newName" />
-    <input type="text" v-model.number="newAge" />
+    <input type="number" v-model.number="newAge" />
     <button @click="addPerson()">Add</button>
 </template>
 
