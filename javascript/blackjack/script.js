@@ -27,6 +27,7 @@ const resetDeck = () => {
     // The suit, one of S (Spades), D (Diamonds), C (Clubs), or H (Hearts).
     // Image api: https://deckofcardsapi.com/static/img/<id>.png
 
+    // Feedback: Add objects with score and ids, so parsing is not needed within the code
     deckOfCards = [
         "AS", "2S", "3S", "4S", "5S", "6S", "7S", "8S", "9S", "0S", "JS", "QS", "KS",
         "AD", "2D", "3D", "4D", "5D", "6D", "7D", "8D", "9D", "0D", "JD", "QD", "KD",
@@ -36,8 +37,8 @@ const resetDeck = () => {
 }
 
 const drawCard = () => {
-    let cardIndex = Math.floor(Math.random() * deckOfCards.length);
-    let deletedArray = deckOfCards.splice(cardIndex, 1); // removes at index
+    const cardIndex = Math.floor(Math.random() * deckOfCards.length);
+    const deletedArray = deckOfCards.splice(cardIndex, 1); // removes at index
     return deletedArray[0]; // should be 0-1, if 0 returns undefined? 
 }
 
@@ -69,7 +70,7 @@ const updateView = (hideCard = true) => {
     }
 
     for (let i = 0; i < playerCards.length; i++) {
-        let cardId = playerCards[i];
+        const cardId = playerCards[i];
 
         updateCard(cardId, playerCardsElement);
     }
@@ -80,11 +81,11 @@ const updateScore = (element, cards, hideCard = false) => {
         cards = cards.slice(1); // ignore first card    
     }
 
-    let scores = scoreCards(cards);
+    const scores = scoreCards(cards);
     let result = "BUST";
 
     for (let i = 0; i < scores.length; i++) {
-        let score = scores[i];
+        const score = scores[i];
         if (score == 21) {
             if (cards.length == 2) {
                 result = "BLACKJACK";
@@ -107,11 +108,11 @@ const updateScore = (element, cards, hideCard = false) => {
 const scoreCards = (cards) => {
     let scores = [0];
 
-    for (let card of cards) {
-        let type = card.charAt(0);
-        let newScores = [];
+    for (const card of cards) {
+        const type = card.charAt(0);
+        const newScores = [];
 
-        for (let current of scores) {
+        for (const current of scores) {
             switch (type) {
                 case 'A':
                     newScores.push(current + 1);
@@ -124,7 +125,7 @@ const scoreCards = (cards) => {
                     newScores.push(current + 10);
                     break;
                 default:
-                    let value = parseInt(type);
+                    const value = parseInt(type);
                     if (isNaN(value)) { // Not-A-Number, as we didnt have enough null types in javascript
                         // should not be possible, but I think its a bad practice to not handle parse errors.
                         throw new Error("Invalid card id in cards");
@@ -136,8 +137,8 @@ const scoreCards = (cards) => {
     }
 
     // remove duplicates and invalid scores
-    let finalScores = [];
-    for (let score of scores) {
+    const finalScores = [];
+    for (const score of scores) {
         if (score > 21) {
             continue;
         }
@@ -153,7 +154,7 @@ const scoreCards = (cards) => {
 
 const updateCard = (id, element) => {
     const clonedCardElement = cardTemplateElement.content.cloneNode(true);
-    let imageElement = clonedCardElement.querySelector("img");
+    const imageElement = clonedCardElement.querySelector("img");
 
     imageElement.src = imageUrl + id + ".png";
     imageElement.alt = "playing card " + id;
@@ -189,11 +190,11 @@ const handleStart = () => {
     hitButtonElement.innerHTML = "Hit";
     standButtonElement.disabled = null;
 
-    let dealerScores = scoreCards(dealerCards);
-    let playerScores = scoreCards(playerCards);
+    const dealerScores = scoreCards(dealerCards);
+    const playerScores = scoreCards(playerCards);
 
-    let dealerHasBlackjack = dealerScores.includes(21);
-    let playerHasBlackjack = playerScores.includes(21);
+    const dealerHasBlackjack = dealerScores.includes(21);
+    const playerHasBlackjack = playerScores.includes(21);
 
     if (dealerHasBlackjack || playerHasBlackjack) {
         endGame();
@@ -215,7 +216,7 @@ const handleStart = () => {
 const handleHit = () => {
     playerCards.push(drawCard());
 
-    let playerScores = scoreCards(playerCards);
+    const playerScores = scoreCards(playerCards);
 
     if (playerScores.length == 0) {
         winMessageElement.innerHTML = "Player Bust, Dealer Wins";
@@ -237,8 +238,8 @@ const handleStandButtonClick = () => {
     hitButtonElement.disabled = "disabled";
     standButtonElement.disabled = "disabled";
 
-    let playerScores = scoreCards(playerCards);
-    let playerHighest = getHighestValidScore(playerScores);
+    const playerScores = scoreCards(playerCards);
+    const playerHighest = getHighestValidScore(playerScores);
 
     updateView(false); // make card visible
     dealerDrawCards(playerHighest); // start drawing cards if needed
@@ -248,7 +249,7 @@ const handleStandButtonClick = () => {
 const getHighestValidScore = (scores) => {
     let highest = -1; // no valid score found, BUST
     
-    for (let score of scores) {
+    for (const score of scores) {
         if (score > highest) {
             highest = score;
         }
@@ -259,8 +260,8 @@ const getHighestValidScore = (scores) => {
 
 const dealerDrawCards = (playerHighest) => {
 
-    let dealerScores = scoreCards(dealerCards);
-    let dealerHighest = getHighestValidScore(dealerScores);
+    const dealerScores = scoreCards(dealerCards);
+    const dealerHighest = getHighestValidScore(dealerScores);
 
     // push is a draw/tie, currently set at 16
     if (playerHighest === allowPushAt && dealerHighest === allowPushAt) {
