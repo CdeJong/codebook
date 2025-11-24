@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import ChildComponent from './PropsAndEmits/ChildComponent.vue';
+import ChildComponent from '@/Components/PropsAndEmits/ChildComponent.vue'
 
 const message = ref('Hello World');
 

@@ -1,9 +1,9 @@
 <script setup>
-
+    const message = defineModel();
 </script>
 
 <template>
-    <h1>Component</h1>
+    <input type="text" v-model="message" />
 </template>
 
 <style scoped></style>
