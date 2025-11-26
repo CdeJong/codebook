@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
+import ProductRow from './components/ProductRow.vue';
 
 const currencyFormatter = new Intl.NumberFormat("nl-NL", { style: "currency", currency: "EUR"});
 
@@ -10,17 +11,9 @@ const products = ref([
 	{name: "Noten", 		price: 2.99, amount: 0}
 ]);
 
-const subtotal = (product) => {
-	return formatPrice(product.price * product.amount);
-}
-
-const formatPrice = (number) => {
-	return currencyFormatter.format(number);
-}
-
 const total = computed(() => {
 	const value = products.value.reduce((accumulator, product) => accumulator + product.amount * product.price, 0);
-	return formatPrice(value);
+	return currencyFormatter.format(value);
 });
 
 </script>
@@ -36,12 +29,8 @@ const total = computed(() => {
 			</tr>
 		</thead>
 		<tbody>
-			<tr v-for="(product, index) in products" :key="index">
-				<td>{{ product.name }}</td>
-				<td class="numeric">{{ formatPrice(product.price) }}</td>
-				<td><input type="number" min="0" v-model="product.amount"></td>
-				<td class="numeric">{{ subtotal(product) }}</td>
-			</tr>
+			<!-- For some reason "products[index]" is allowed, but "product" isn't -->
+			<ProductRow v-for="(product, index) in products" :key="index" v-model="products[index]" />
 		</tbody>
 		<tfoot>
 			<tr>
