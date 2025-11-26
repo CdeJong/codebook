@@ -2,16 +2,21 @@
 import { ref, computed } from 'vue';
 import ProductRow from '@/components/ProductRow.vue';
 
-const currencyFormatter = new Intl.NumberFormat("nl-NL", { style: "currency", currency: "EUR"});
+const initialValue = 0;
+const currencyFormatter = new Intl.NumberFormat("nl-NL", {
+	style: "currency", 
+	currency: "EUR"
+});
 
 const props = defineProps({
     products: Array
 });
 
-const products = ref(props.products);
-
 const total = computed(() => {
-	const value = products.value.reduce((accumulator, product) => accumulator + product.amount * product.price, 0);
+	const value = props.products.reduce(
+		(accumulator, product) => accumulator + product.amount * product.price, 
+		initialValue
+	);
 	return currencyFormatter.format(value);
 });
 
@@ -28,8 +33,11 @@ const total = computed(() => {
 			</tr>
 		</thead>
 		<tbody>
-			<!-- For some reason "products[index]" is allowed, but "product" isn't -->
-			<ProductRow v-for="(product, index) in products" :key="index" v-model="products[index]" />
+			<ProductRow 
+				v-for="(product, index) in props.products" 
+				:key="index" 
+				v-model="props.products[index]" 
+			/>
 		</tbody>
 		<tfoot>
 			<tr>
