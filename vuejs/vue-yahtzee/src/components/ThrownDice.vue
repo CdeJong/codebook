@@ -4,6 +4,7 @@ const diceSides = 6;
 
 const dice = defineModel();
 
+
 const rollDice = () => {
     const result = [];
 
@@ -29,11 +30,7 @@ const rollDice = () => {
         </thead>
         <tbody>
             <tr>
-                <td>{{ dice[0] ?? '-' }}</td>
-                <td>{{ dice[1] ?? '-' }}</td>
-                <td>{{ dice[2] ?? '-' }}</td>
-                <td>{{ dice[3] ?? '-' }}</td>
-                <td>{{ dice[4] ?? '-' }}</td>
+                <td v-for="(value, index) in dice" :key="index">{{ value ?? '-' }}</td>
             </tr>
         </tbody>
     </table>

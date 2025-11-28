@@ -4,7 +4,7 @@ import { ref } from "vue";
 import ScoreTable from '@/components/ScoreTable.vue';
 import ThrownDice from '@/components/ThrownDice.vue';
 
-const dice = ref([]);
+const dice = ref([null, null, null, null, null]);
 
 </script>
 

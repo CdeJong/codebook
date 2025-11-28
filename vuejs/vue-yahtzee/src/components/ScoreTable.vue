@@ -5,48 +5,43 @@ const yahtzeeScore = 50;
 const smallStraightScore = 30;
 const largeStraightScore = 40;
 const fullHouseScore = 25;
+const categoryNames = {
+    1: "Enen",
+    2: "Tweeën",
+    3: "Drieën",
+    4: "Vieren",
+    5: "Vijven",
+    6: "Zessen"
+} 
 
 const dice = defineModel();
 
 const countResult = computed(() => {
-    let result = []; // length 7, 0-6 note 0 is not used
+    const result = {
+        1: 0, 
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0
+    };
 
     for (let i = 0; i < dice.value.length; i++) {
         const value = dice.value[i];
         const count = result[value];
-
-        if (count == null) {
-            result[value] = 1;
-        } else {
-            result[value] = count + 1;
-        }
+        result[value] = count + 1;
     }
 
     return result;
 });
 
-const scoreCount = (value, countResult) => {
-    const count = countResult[value];
+const hasXOfAKind = (amount) => {
+    let result = false;
 
-    if (count == null) {
-        return 0;
-    }
-
-    return count * value;
-};
-
-const scoreXOfAKind = (amount, countResult, score) => {
-    let result = 0;
-
-    for (let i = 1; i < countResult.length; i++) {
-        let count = countResult[i];
-
-        if (count == null) {
-            continue;
-        }
+    for (const [, count] of Object.entries(countResult.value)) {
 
         if (count >= amount) {
-            result = score;
+            result = true;
             break;
         }
     }
@@ -54,13 +49,11 @@ const scoreXOfAKind = (amount, countResult, score) => {
     return result;
 };
 
-const hasStraight = (length, countResult) => {
+const hasStraight = (length) => {
     let highestLength = 0;
     let currentLength = 0;
 
-    for (let i = 1; i < countResult.length; i++) {
-        let count = countResult[i];
-
+    for (const [, count] of Object.entries(countResult.value)) {
         if (count == null || count === 0) {
             currentLength = 0; // reset!
         } else {
@@ -73,13 +66,6 @@ const hasStraight = (length, countResult) => {
     return highestLength >= length;
 };
 
-const aces = computed(() => scoreCount(1, countResult.value));
-const twos = computed(() => scoreCount(2, countResult.value));
-const threes = computed(() => scoreCount(3, countResult.value));
-const fours = computed(() => scoreCount(4, countResult.value));
-const fives = computed(() => scoreCount(5, countResult.value));
-const sixes = computed(() => scoreCount(6, countResult.value));
-
 const chance = computed(() => {
     if (dice.value.length == 0) {
         return 0;
@@ -87,26 +73,20 @@ const chance = computed(() => {
 
     return dice.value.reduce((accumulator, currentValue) => accumulator + currentValue);
 });
-const threeOfAKind = computed(() => scoreXOfAKind(3, countResult.value, chance.value));
-const fourOfAKind = computed(() => scoreXOfAKind(4, countResult.value, chance.value));
-const fullHouse = computed(() => {
+
+const hasFullHouse = () => {
     let hasThree = false;
     let hasTwo = false;
-    for (let i = 1; i < countResult.value.length; i++) {
-        let count = countResult.value[i];
-
+    for (const [, count] of Object.entries(countResult.value)) {
         if (count === 3) {
             hasThree = true;
         } else if (count === 2) {
             hasTwo = true;
         }
     }
-    return hasThree && hasTwo ? fullHouseScore : 0;
-});
-const smallStraight = computed(() => (hasStraight(4, countResult.value) ? smallStraightScore : 0));
-const largeStraight = computed(() => (hasStraight(5, countResult.value) ? largeStraightScore : 0));
+    return hasThree && hasTwo;
+};
 
-const yahtzee = computed(() => scoreXOfAKind(5, countResult.value, yahtzeeScore));
 </script>
 
 <template>
@@ -118,29 +98,9 @@ const yahtzee = computed(() => scoreXOfAKind(5, countResult.value, yahtzeeScore)
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Enen</td>
-                <td>{{ aces }}</td>
-            </tr>
-            <tr>
-                <td>Tweeën</td>
-                <td>{{ twos }}</td>
-            </tr>
-            <tr>
-                <td>Drieën</td>
-                <td>{{ threes }}</td>
-            </tr>
-            <tr>
-                <td>Vieren</td>
-                <td>{{ fours }}</td>
-            </tr>
-            <tr>
-                <td>Vijven</td>
-                <td>{{ fives }}</td>
-            </tr>
-            <tr>
-                <td>Zessen</td>
-                <td>{{ sixes }}</td>
+            <tr v-for="(amount, index) in countResult" :key="index">
+                <td>{{ categoryNames[index] }}</td>
+                <td>{{ amount * index }}</td>
             </tr>
             <tr>
                 <td colspan="2"></td>
@@ -151,27 +111,27 @@ const yahtzee = computed(() => scoreXOfAKind(5, countResult.value, yahtzeeScore)
             </tr>
             <tr>
                 <td>Three of a kind</td>
-                <td>{{ threeOfAKind }}</td>
+                <td>{{ hasXOfAKind(3) ? chance : 0 }}</td>
             </tr>
             <tr>
                 <td>Four of a kind</td>
-                <td>{{ fourOfAKind }}</td>
+                <td>{{ hasXOfAKind(4) ? chance : 0 }}</td>
             </tr>
             <tr>
                 <td>Full House</td>
-                <td>{{ fullHouse }}</td>
+                <td>{{ hasFullHouse() ? fullHouseScore : 0 }}</td>
             </tr>
             <tr>
                 <td>Small Straight</td>
-                <td>{{ smallStraight }}</td>
+                <td>{{ hasStraight(4) ? smallStraightScore : 0 }}</td>
             </tr>
             <tr>
                 <td>Large Straight</td>
-                <td>{{ largeStraight }}</td>
+                <td>{{ hasStraight(5) ? largeStraightScore : 0 }}</td>
             </tr>
             <tr>
                 <td>Yahtzee</td>
-                <td>{{ yahtzee }}</td>
+                <td>{{ hasXOfAKind(5) ? yahtzeeScore : 0 }}</td>
             </tr>
         </tbody>
     </table>
