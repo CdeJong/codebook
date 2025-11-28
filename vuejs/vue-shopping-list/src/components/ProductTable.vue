@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import ProductRow from '@/components/ProductRow.vue';
 
 const initialValue = 0;
@@ -8,13 +8,15 @@ const currencyFormatter = new Intl.NumberFormat("nl-NL", {
 	currency: "EUR"
 });
 
-const props = defineProps({
-    products: Array
-});
+// props are not allowed to be mutated, when used in a v-for as props.products[index] its seen as an mutation, so switched to a model.
+// const props = defineProps({
+//     products: Array
+// });
+const products = defineModel();
 
 const total = computed(() => {
-	const value = props.products.reduce(
-		(accumulator, product) => accumulator + product.amount * product.price, 
+	const value = products.value.reduce(
+		(accumulator, product) => accumulator + product.amount * product.price,
 		initialValue
 	);
 	return currencyFormatter.format(value);
@@ -33,11 +35,7 @@ const total = computed(() => {
 			</tr>
 		</thead>
 		<tbody>
-			<ProductRow 
-				v-for="(product, index) in props.products" 
-				:key="index" 
-				v-model="props.products[index]" 
-			/>
+			<ProductRow v-for="(product, index) in products" :key="index" v-model="products[index]" />
 		</tbody>
 		<tfoot>
 			<tr>
