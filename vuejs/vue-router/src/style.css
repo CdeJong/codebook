@@ -1,0 +1,28 @@
+* {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+header {
+  background-color: aqua;
+  height: 40px;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+}
+
+a {
+  text-decoration: none;
+  padding: 10px;
+  color: black;
+  min-width: 100px;
+  text-align: center;
+}
