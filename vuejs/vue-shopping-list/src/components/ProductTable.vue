@@ -1,12 +1,10 @@
 <script setup>
 import { computed } from 'vue';
+import { formatCurrency } from '@/util/CurrencyUtil.js';
 import ProductRow from '@/components/ProductRow.vue';
 
+
 const initialValue = 0;
-const currencyFormatter = new Intl.NumberFormat("nl-NL", {
-	style: "currency", 
-	currency: "EUR"
-});
 
 // props are not allowed to be mutated, when used in a v-for as props.products[index] its seen as an mutation, so switched to a model.
 // const props = defineProps({
@@ -19,7 +17,7 @@ const total = computed(() => {
 		(accumulator, product) => accumulator + product.amount * product.price,
 		initialValue
 	);
-	return currencyFormatter.format(value);
+	return formatCurrency(value);
 });
 
 </script>
