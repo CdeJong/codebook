@@ -20,3 +20,24 @@ const subtotal = computed(() => {
         <td class="numeric">{{ subtotal }}</td>
 	</tr>
 </template>
+
+<style scoped>
+td {
+    min-width: 100px;
+    padding: 10px;
+    text-align: left;
+}
+
+input {
+    padding: 0;
+    border: none;
+}
+
+tr {
+    border-bottom: 1px solid #888;
+}
+
+.numeric {
+    text-align: right;
+}
+</style>

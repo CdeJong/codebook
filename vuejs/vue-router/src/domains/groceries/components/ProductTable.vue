@@ -44,4 +44,27 @@ const total = computed(() => {
 	</table>
 </template>
 
-<style scoped></style>
+<style scoped>
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    min-width: 100px;
+    padding: 10px;
+    text-align: left;
+}
+
+thead tr {
+    border-bottom: 3px double #888;
+}
+
+.numeric {
+    text-align: right;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+</style>
