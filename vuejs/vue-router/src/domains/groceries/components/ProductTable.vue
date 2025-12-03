@@ -47,10 +47,11 @@ const total = computed(() => {
 <style scoped>
 table {
     border-collapse: collapse;
+	width: min(600px, 100%);
 }
 
 th, td {
-    min-width: 100px;
+    /* min-width: 100px; */
     padding: 10px;
     text-align: left;
 }

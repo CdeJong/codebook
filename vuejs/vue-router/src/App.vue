@@ -7,7 +7,6 @@
 			<nav>
 				<RouterLink to="/" >Home</RouterLink>
 				<RouterLink to="/create" >Create</RouterLink>
-				<!-- <RouterLink to="/edit" >Edit</RouterLink> -->
 				<RouterLink to="/overview" >Overview</RouterLink>
 			</nav>
 		</div>

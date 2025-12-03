@@ -1,11 +1,12 @@
-import Create from "@/domains/groceries/pages/Create.vue";
-import Edit from "@/domains/groceries/pages/Edit.vue";
-import Overview from "@/domains/groceries/pages/Overview.vue";
+import HomePage from "@/domains/groceries/pages/HomePage.vue";
+import CreatePage from "@/domains/groceries/pages/CreatePage.vue";
+import EditPage from "@/domains/groceries/pages/EditPage.vue";
+import OverviewPage from "@/domains/groceries/pages/OverviewPage.vue";
 
 export const routes = [
-    { path: '/', component: Overview },
-    { path: '/create', component: Create },
-    { path: '/edit', component: Edit },
-    { path: '/overview', component: Overview },
+    { path: '/', component: HomePage },
+    { path: '/create', component: CreatePage },
+    { path: '/edit/:id', component: EditPage },
+    { path: '/overview', component: OverviewPage },
 ];
 

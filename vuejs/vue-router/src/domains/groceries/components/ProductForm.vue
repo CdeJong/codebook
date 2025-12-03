@@ -4,19 +4,23 @@ import { reactive } from 'vue';
 const emit = defineEmits(["submit"]);
 
 const props = defineProps({
-     product: { type: Object, default: () => {
-        return {name: '', price: 0, amount: 0}
-    }}
+     product: { type: Object, default: () => ({name: '', price: '', amount: 0}) },
+     clearOnSubmit: { type: Boolean, default: () => false },
+     submitButtonText: { type: String, default: () => "Submit" }
 });
 
 let product = reactive({...props.product});
 
 const submit = () => {
-    emit("submit", product);
+    emit("submit", {...product});
+    if (props.clearOnSubmit) {
+        product.name = '';
+        product.price = '';
+        product.amount = 0;
+    }
 }
 </script>
 
-<!-- todo find a way to clear the form without affecting the reference -->
 <template>
     <form @submit.prevent="submit()">
         <label for="name">Name:</label>
@@ -28,7 +32,7 @@ const submit = () => {
         <label for="name">Amount:</label>
         <input type="number" min="0" placeholder="0" v-model="product.amount">
 
-        <button type="submit">Save</button>
+        <button type="submit">{{ props.submitButtonText }}</button>
     </form>
 </template>
 
@@ -36,7 +40,7 @@ const submit = () => {
 form {
     display: flex;
     flex-direction: column;
-    align-content: start;
+    width: min(600px, 100%);
 }
 
 input {
@@ -44,8 +48,9 @@ input {
     border-bottom: 1px solid black;
 }
 
-label, button {
-    margin-top: 10px;
+input {
+    margin-bottom: 10px;
+    /* width: 100%; */
 }
 
 input, label, button {
@@ -53,9 +58,11 @@ input, label, button {
 }
 
 button {
+    align-self: flex-start;
     background-color: aqua;
     border: none;
     border-radius: 5px;
+    min-width: 100px;
 }
 
 button:hover {

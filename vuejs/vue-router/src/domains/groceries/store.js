@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
 
-let nextId = 5;
+let nextId = 4;
 
 const groceries = ref([
 	{id: 0, name: "Brood", 		    price: 1.00, amount: 0},
@@ -13,12 +13,21 @@ export const getAllGroceries = computed(() => groceries.value);
 export const getGroceryById = (id) => computed(() => groceries.value.find(grocery => grocery.id == id));
 
 export const addGrocery = (grocery) => {
-    grocery['id'] = ++nextId;
+    grocery['id'] = nextId++;
     groceries.value.push(grocery);
 }
 
-export const deleteGrocery = (grocery) => {
-    const index = groceries.value.indexOf(grocery);
+export const updateGrocery = (grocery) => {
+    const id = grocery.id;
+    const index = groceries.value.findIndex(item => item.id == id);
+    if (index == -1) {
+        throw new Error("Grocery with id " + id + " does not exist!");
+    }
+    groceries.value.splice(index, 1, grocery);
+}
+
+export const deleteGrocery = (id) => {
+    const index = groceries.value.findIndex(item => item.id == id);
     if (index == -1) {
         return;
     }
