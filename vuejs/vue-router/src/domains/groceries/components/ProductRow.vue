@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 
 import { formatCurrency } from '@/util/CurrencyUtil.js';
+import { deleteGrocery } from '../store';
 
 const product = defineModel();
 
@@ -17,20 +18,26 @@ const editUrl = computed(() => "/edit/" + product.value.id)
 <template>
     <RouterLink :to="editUrl" custom v-slot="{ navigate }">
         <tr @click="navigate">
-            <td>{{ product.name }}</td>
-            <td class="numeric">{{ formatCurrency(product.price) }}</td>
-            <td><input type="number" min="0" v-model="product.amount" @click.stop @mousedown.stop /></td>
-            <td class="numeric">{{ subtotal }}</td>
+            <td class="padding">{{ product.name }}</td>
+            <td class="padding numeric">{{ formatCurrency(product.price) }}</td>
+            <td class="padding"><input type="number" min="0" v-model="product.amount" @click.stop @mousedown.stop /></td>
+            <td class="padding numeric">{{ subtotal }}</td>
+            <td><button class="edit" >Edit</button></td>
+            <td><button class="delete" @click.stop="deleteGrocery(product.id)">Delete</button></td>
         </tr>
     </RouterLink>
 </template>
 
 <style scoped>
 
+.padding {
+    padding: 10px;
+}
+
 td {
     /* min-width: 100px; */
-    padding: 10px;
     text-align: left;
+    padding: 0 5px;
 }
 
 input {
@@ -51,4 +58,27 @@ tr:hover input {
 .numeric {
     text-align: right;
 }
+
+button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+.edit {
+    background-color: aqua;
+}
+
+.edit:hover {
+    color: white;
+}
+
+.delete {
+    background-color: red;
+}
+
+.delete:hover {
+    color: white;
+}
+
 </style>

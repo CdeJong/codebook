@@ -7,6 +7,6 @@ export const routes = [
     { path: '/', component: HomePage },
     { path: '/create', component: CreatePage },
     { path: '/edit/:id', component: EditPage },
-    { path: '/overview', component: OverviewPage },
+    { path: '/overview', component: OverviewPage }
 ];
 

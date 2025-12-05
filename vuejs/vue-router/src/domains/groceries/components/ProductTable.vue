@@ -23,31 +23,44 @@ const total = computed(() => {
 </script>
 
 <template>
-	<table>
-		<thead>
-			<tr>
-				<th>Product</th>
-				<th>Prijs</th>
-				<th>Aantal</th>
-				<th>Subtotaal</th>
-			</tr>
-		</thead>
-		<tbody>
-			<ProductRow v-for="(product, index) in products" :key="index" v-model="products[index]" />
-		</tbody>
-		<tfoot>
-			<tr>
-				<td colspan="3" class="bold">Totaal</td>
-				<td class="numeric bold">{{ total }}</td>
-			</tr>
-		</tfoot>
-	</table>
+	<div class="table-wrapper">
+		<table>
+			<thead>
+				<tr>
+					<th>Product</th>
+					<th>Prijs</th>
+					<th>Aantal</th>
+					<th>Subtotaal</th>
+					<th colspan="2" ></th>
+				</tr>
+			</thead>
+			<tbody>
+				<ProductRow v-for="(_, index) in products" :key="index" v-model="products[index]" />
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="3" class="bold">Totaal</td>
+					<td class="numeric bold">{{ total }}</td>
+					<td colspan="2"></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+
+	
 </template>
 
 <style scoped>
+.table-wrapper {
+	width: 100%;
+	max-width: 100%;
+	overflow-x: auto;
+}
+
 table {
     border-collapse: collapse;
-	width: min(600px, 100%);
+	min-width: max-content;
+	margin-bottom: 10px;
 }
 
 th, td {
