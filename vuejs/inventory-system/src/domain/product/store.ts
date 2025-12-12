@@ -5,13 +5,13 @@ let nextId = 4;
 
 
 const products = ref<Product[]>([
-    {id: 0, price: 1.00, amount: 0, minimumAmount: 5, name: "Brood"},
-	{id: 1, price: 0.99, amount: 0, minimumAmount: 5, name: "Broccoli"},
-	{id: 2, price: 1.20, amount: 0, minimumAmount: 5, name: "Krentebollen"},
-	{id: 3, price: 2.99, amount: 0, minimumAmount: 5, name: "Noten"},
-    {id: 4, price: 0.99, amount: 0, minimumAmount: 5, name: "Extra-extra-cheesy-double-bacon-burger"},
-	{id: 5, price: 1.20, amount: 0, minimumAmount: 5, name: "Chocoladehazelnootpasta"},
-	{id: 6, price: 2.99, amount: 0, minimumAmount: 5, name: "Helemaal-gegrilde BBQ-kippendijfilet"}
+    {id: 0, amount: 1, minimumAmount: 5, name: "Brood"},
+	{id: 1, amount: 5, minimumAmount: 5, name: "Broccoli"},
+	{id: 2, amount: 10, minimumAmount: 5, name: "Krentebollen"},
+	{id: 3, amount: 6, minimumAmount: 5, name: "Noten"},
+    {id: 4, amount: 7, minimumAmount: 5, name: "Extra-extra-cheesy-double-bacon-burger"},
+	{id: 5, amount: 1, minimumAmount: 5, name: "Chocoladehazelnootpasta"},
+	{id: 6, amount: 4, minimumAmount: 5, name: "Helemaal-gegrilde BBQ-kippendijfilet"}
 ]);
 
 export const addProduct = (newProduct : NewProduct) : void => {

@@ -1,25 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { formatCurrency } from '@/util/CurrencyUtil.ts';
 import { deleteProduct } from '@/domain/product/store.ts';
 import { type Product } from '@/domain/product/model/product';
 
 const product = defineModel<Product>({default: () => {}}); // todo fix hacky bypass
 
-const subtotal = computed(() => {
-	return formatCurrency(product.value.price * product.value.amount);
-});
-
-const editUrl = computed(() => "/edit/" + product.value.id);
+const editUrl = computed(() => "/edit/" + product.value.id); // todo is computed needed? id should never change
 </script>
 
 <template>
     <RouterLink :to="editUrl" custom v-slot="{ navigate }">
         <tr @click="navigate">
             <td class="padding name" :title=product.name>{{ product.name }}</td>
-            <td class="padding numeric">{{ formatCurrency(product.price) }}</td>
             <td class="padding"><input type="number" min="0" v-model="product.amount" @click.stop @mousedown.stop /></td>
-            <td class="padding numeric">{{ subtotal }}</td>
+            <td class="padding">{{ product.minimumAmount }}</td>
             <td><button class="edit" >Edit</button></td>
             <td><button class="delete" @click.stop="deleteProduct(product.id)">Delete</button></td>
         </tr>
@@ -51,16 +45,11 @@ input {
 
 tr {
     border-bottom: 1px solid #888;
-    display: table-row;
 }
 
 tr:hover,
 tr:hover input {
     background-color: aquamarine;
-}
-
-.numeric {
-    text-align: right;
 }
 
 button {
