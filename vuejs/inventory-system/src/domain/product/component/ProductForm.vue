@@ -21,7 +21,6 @@ const submit = () : void => {
     emit("submit", {...product});
     if (props.clearOnSubmit) {
         product.name = '';
-        product.price = 0;
         product.minimumAmount = 0;
         product.amount = 0;
     }
@@ -32,9 +31,6 @@ const submit = () : void => {
     <form @submit.prevent="submit()">
         <label for="name">Name:</label>
         <input id="name" type="text" placeholder="Bread" required v-model="product.name">
-
-        <label for="price">Price:</label>
-        <input id="price" type="text" placeholder="1.99" required v-model.number="product.price">
 
         <label for="amount">Amount:</label>
         <input id="amount" type="number" min="0" placeholder="0" v-model="product.amount">

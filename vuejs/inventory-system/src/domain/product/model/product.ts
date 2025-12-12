@@ -3,7 +3,6 @@ export interface Product {
     name: string;
     amount: number;
     minimumAmount: number;
-    price: number;
 }
 
 export type NewProduct = Omit<Product, "id">;

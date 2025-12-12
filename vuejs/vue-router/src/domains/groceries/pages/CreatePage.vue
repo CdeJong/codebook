@@ -9,7 +9,6 @@ const submit = (grocery) => {
     addGrocery(grocery);
     router.push('/overview');
 }
-
 </script>
 
 <template>
