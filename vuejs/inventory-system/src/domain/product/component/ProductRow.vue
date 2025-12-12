@@ -16,7 +16,7 @@ const editUrl = computed(() => "/edit/" + product.value.id);
 <template>
     <RouterLink :to="editUrl" custom v-slot="{ navigate }">
         <tr @click="navigate">
-            <td class="padding">{{ product.name }}</td>
+            <td class="padding name" :title=product.name>{{ product.name }}</td>
             <td class="padding numeric">{{ formatCurrency(product.price) }}</td>
             <td class="padding"><input type="number" min="0" v-model="product.amount" @click.stop @mousedown.stop /></td>
             <td class="padding numeric">{{ subtotal }}</td>
@@ -32,8 +32,14 @@ const editUrl = computed(() => "/edit/" + product.value.id);
     padding: 10px;
 }
 
+.name {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 td {
-    /* min-width: 100px; */
     text-align: left;
     padding: 0 5px;
 }

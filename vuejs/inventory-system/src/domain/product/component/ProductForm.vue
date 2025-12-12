@@ -6,8 +6,8 @@ const emit = defineEmits(["submit"]);
 
 interface Props {
     product? : NewProduct,
-    clearOnSubmit: boolean,
-    submitButtonText: string
+    clearOnSubmit?: boolean,
+    submitButtonText?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
