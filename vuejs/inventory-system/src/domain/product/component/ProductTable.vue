@@ -2,10 +2,7 @@
 import { type Product } from '@/domain/product/model/product';
 import ProductRow from '@/domain/product/component/ProductRow.vue';
 
-const products = defineModel<Product[]>({
-    default: () => [] // so its never undefined
-});
-
+const products = defineModel<Product[]>({required: true});
 </script>
 
 <template>
@@ -20,7 +17,10 @@ const products = defineModel<Product[]>({
 				</tr>
 			</thead>
 			<tbody>
-				<ProductRow v-for="(_, index) in products" :key="index" v-model="products[index]" />
+				<!-- Note the exclamation mark behind products[index], a non-null operator as the ProductRow expects a non-null Product -->
+				<!-- In javascript an "index out of bounds" returns undefined, but that is almost impossible in this case, -->
+				<!-- so I tell typescript to see it as a non-null value -->
+				<ProductRow v-for="(_, index) in products" :key="index" v-model="products[index]!" /> 
 				<tr v-if="products.length == 0" class="no-data">
 					<td colspan="3">No Data</td>
 					<td colspan="2" ></td>
@@ -63,5 +63,4 @@ thead tr {
 	text-align: center;
 	padding: 10px;
 }
-
 </style>
