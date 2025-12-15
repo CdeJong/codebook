@@ -22,12 +22,14 @@ nav {
   height: 100%;
 }
 
-a {
+nav a {
   text-decoration: none;
-  padding: 10px;
   color: black;
+  padding: 0 10px;
   min-width: 100px;
   text-align: center;
+  height: 100%;
+  align-content: center;
 }
 
 a:hover {
