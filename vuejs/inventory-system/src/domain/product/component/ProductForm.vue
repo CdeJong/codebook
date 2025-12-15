@@ -11,7 +11,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    product: () => ({name: '', price: 0, amount: 0, minimumAmount: 0}), 
+    product: () => ({name: '', amount: 0, minimumAmount: 0}), 
     clearOnSubmit: false, 
     submitButtonText: 'Submit' 
 })
@@ -56,7 +56,6 @@ input {
 
 input {
     margin-bottom: 10px;
-    /* width: 100%; */
 }
 
 input, label, button {

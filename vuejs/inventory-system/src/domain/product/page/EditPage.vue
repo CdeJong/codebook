@@ -31,7 +31,8 @@ const submit = (newProduct : NewProduct) => {
 		return;
 	}
 	updateProduct({id: product.id, ...newProduct});
-	router.push('/overview'); // change this to a pop-up "Saved"
+    // a pop-up with "Saved" would be nicer, but that would more be a "COULD" priority, and user story says to redirect, so its fine for now!
+	router.push('/overview'); 
 }
 
 </script>

@@ -1,9 +1,6 @@
 import { ref, computed } from 'vue';
 import { type Product, type NewProduct } from '@/domain/product/model/product';
 
-let nextId = 4;
-
-
 const products = ref<Product[]>([
     {id: 0, amount: 1, minimumAmount: 5, name: "Brood"},
 	{id: 1, amount: 5, minimumAmount: 5, name: "Broccoli"},
@@ -13,6 +10,8 @@ const products = ref<Product[]>([
 	{id: 5, amount: 1, minimumAmount: 5, name: "Chocoladehazelnootpasta"},
 	{id: 6, amount: 4, minimumAmount: 5, name: "Helemaal-gegrilde BBQ-kippendijfilet"}
 ]);
+
+let nextId = products.value.length; // 7
 
 export const addProduct = (newProduct : NewProduct) : void => {
     const product = {id: nextId++, ...newProduct}

@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { deleteProduct } from '@/domain/product/store.ts';
 import { type Product } from '@/domain/product/model/product';
 
-const product = defineModel<Product>({default: () => {}}); // todo fix hacky bypass
+const product = defineModel<Product>({required: true});
 
-const editUrl = computed(() => "/edit/" + product.value.id); // todo is computed needed? id should never change
+const editUrl = "/edit/" + product.value.id;
 </script>
 
 <template>
-    <RouterLink :to="editUrl" custom v-slot="{ navigate }">
+    <RouterLink :to=editUrl custom v-slot="{ navigate }">
         <tr @click="navigate">
             <td class="padding name" :title=product.name>{{ product.name }}</td>
             <td class="padding"><input type="number" min="0" v-model="product.amount" @click.stop @mousedown.stop /></td>
@@ -21,7 +20,6 @@ const editUrl = computed(() => "/edit/" + product.value.id); // todo is computed
 </template>
 
 <style scoped>
-
 .padding {
     padding: 10px;
 }

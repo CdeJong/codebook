@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import ProductTable from '@/domain/product/component/ProductTable.vue';
 import { getLowProducts } from '@/domain/product/store.ts';
-
-
 </script>
 
 <template>
