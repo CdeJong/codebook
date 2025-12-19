@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue';
-import { type Product, type NewProduct } from '@/domain/product/model/product';
+import { type Product } from '@/domain/product/model/product';
 
 const products = ref<Product[]>([
     {id: 0, amount: 1, minimumAmount: 5, name: "Brood"},
@@ -13,9 +13,8 @@ const products = ref<Product[]>([
 
 let nextId = products.value.length; // 7
 
-export const addProduct = (newProduct : NewProduct) : void => {
-    const product = {id: nextId++, ...newProduct}
-    products.value.push(product);
+export const addProduct = (product : Product) : void => {
+    products.value.push({...product, id: nextId++});
 }
 
 export const getProduct = (id : number) : Product | undefined => {

@@ -4,11 +4,10 @@ import { type Product } from '@/domain/product/model/product';
 
 const product = defineModel<Product>({required: true});
 
-const editUrl = "/edit/" + product.value.id;
 </script>
 
 <template>
-    <RouterLink :to=editUrl custom v-slot="{ navigate }">
+    <RouterLink :to="{name : 'product.edit', params: {id:product.id }}" custom v-slot="{ navigate }">
         <tr @click="navigate">
             <td class="padding name" :title=product.name>{{ product.name }}</td>
             <td class="padding"><input type="number" min="0" v-model="product.amount" @click.stop @mousedown.stop /></td>

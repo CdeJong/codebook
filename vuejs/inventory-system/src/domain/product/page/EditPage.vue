@@ -2,7 +2,7 @@
 import ProductForm from '@/domain/product/component/ProductForm.vue';
 import { getProduct, updateProduct, deleteProduct } from '@/domain/product/store.ts';
 import { useRoute, useRouter } from 'vue-router';
-import type { NewProduct } from '../model/product';
+import { type Product } from '@/domain/product/model/product';
 
 const router = useRouter();
 const route = useRoute();
@@ -23,16 +23,15 @@ const onClickDelete = () => {
 		return;
 	}
     deleteProduct(product.id);
-    router.push('/overview');
+    router.push({ name: 'product.overview' });
 };
 
-const submit = (newProduct : NewProduct) => {
+const submit = (newProduct : Product) => {
 	if (product == undefined) {
 		return;
 	}
-	updateProduct({id: product.id, ...newProduct});
-    // a pop-up with "Saved" would be nicer, but that would more be a "COULD" priority, and user story says to redirect, so its fine for now!
-	router.push('/overview'); 
+	updateProduct({...newProduct, id: product.id});
+	router.push({ name: 'product.overview' }); 
 }
 
 </script>
@@ -40,7 +39,7 @@ const submit = (newProduct : NewProduct) => {
 <template>
     <h1 class="title">Edit product: {{ product ? product.name : "Could not find this product!" }}</h1>
 
-    <ProductForm v-if="product != null" @submit="submit" :product="product" submitButtonText="Save" />
+    <ProductForm v-if="product != null" @submit="submit" :product />
     <p v-else>Unknown Product Id</p>
 
     <div v-if="product != null" class="delete">

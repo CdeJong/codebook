@@ -6,9 +6,9 @@ import OrderPage from '@/domain/product/page/OrderPage.vue';
 
 
 export const routes = [
-    {path: '/', component: HomePage},
-    {path: '/create', component: CreatePage},
-    {path: '/edit/:id', component: EditPage},
-    {path: '/overview', component: OverviewPage},
-    {path: '/order', component: OrderPage},
+    {path: '/', component: HomePage, name: 'product.home'},
+    {path: '/create', component: CreatePage, name: 'product.create'},
+    {path: '/edit/:id', component: EditPage, name: 'product.edit'},
+    {path: '/overview', component: OverviewPage, name: 'product.overview'},
+    {path: '/order', component: OrderPage, name: 'product.order'},
 ];

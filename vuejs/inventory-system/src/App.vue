@@ -4,10 +4,10 @@
 		<header>
 		<div class="container">
 			<nav>
-				<RouterLink to="/" >Home</RouterLink>
-				<RouterLink to="/create" >Create</RouterLink>
-				<RouterLink to="/overview" >Overview</RouterLink>
-				<RouterLink to="/order" >Order</RouterLink>
+				<RouterLink :to="{ name: 'product.home' }" >Home</RouterLink>
+				<RouterLink :to="{ name: 'product.create' }" >Create</RouterLink>
+				<RouterLink :to="{ name: 'product.overview' }" >Overview</RouterLink>
+				<RouterLink :to="{ name: 'product.order' }" >Order</RouterLink>
 			</nav>
 		</div>
 	</header>

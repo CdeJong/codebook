@@ -1,44 +1,30 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
-import { type NewProduct } from '@/domain/product/model/product';
+import { ref } from 'vue';
+import { type Product } from '@/domain/product/model/product';
 
 const emit = defineEmits(["submit"]);
 
-interface Props {
-    product? : NewProduct,
-    clearOnSubmit?: boolean,
-    submitButtonText?: string
-}
+const {product} = defineProps<{product: Product}>()
 
-const props = withDefaults(defineProps<Props>(), {
-    product: () => ({name: '', amount: 0, minimumAmount: 0}), 
-    clearOnSubmit: false, 
-    submitButtonText: 'Submit' 
-})
-const product : NewProduct = reactive({...props.product});
+const copyProduct = ref({...product});
 
 const submit = () : void => {
-    emit("submit", {...product});
-    if (props.clearOnSubmit) {
-        product.name = '';
-        product.minimumAmount = 0;
-        product.amount = 0;
-    }
+    emit("submit", copyProduct.value);
 }
 </script>
 
 <template>
     <form @submit.prevent="submit()">
         <label for="name">Name:</label>
-        <input id="name" type="text" placeholder="Bread" required v-model="product.name">
+        <input id="name" type="text" placeholder="Bread" required v-model="copyProduct.name">
 
         <label for="amount">Amount:</label>
-        <input id="amount" type="number" min="0" placeholder="0" v-model="product.amount">
+        <input id="amount" type="number" min="0" placeholder="0" v-model="copyProduct.amount">
 
         <label for="minimum-amount">Minimum Amount:</label>
-        <input id="minimum-amount" type="number" min="0" placeholder="0" v-model="product.minimumAmount">
+        <input id="minimum-amount" type="number" min="0" placeholder="0" v-model="copyProduct.minimumAmount">
 
-        <button type="submit">{{ props.submitButtonText }}</button>
+        <button type="submit">Save</button>
     </form>
 </template>
 
