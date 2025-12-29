@@ -97,6 +97,12 @@ form input, form label, form button {
     padding: 5px 10px;
 }
 
+form .error {
+    padding: 0 10px;
+    margin-bottom: 10px;
+    color: rgb(150, 0, 0);
+}
+
 form button {
     align-self: flex-start;
     background-color: aqua;
