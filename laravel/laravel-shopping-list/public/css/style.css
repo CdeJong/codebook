@@ -1,0 +1,180 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    margin: 0;
+}
+
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 0 auto;
+  height: 100%;
+}
+
+header {
+  background-color: aqua;
+  height: 50px;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 0 10px;
+  color: black;
+  min-width: 100px;
+  text-align: center;
+  height: 100%;
+  align-content: center;
+}
+
+nav .active {
+    font-weight: bold;
+}
+
+nav a:hover {
+  background-color: rgb(177, 255, 255);
+}
+
+.title {
+  margin: 5px 0;
+  padding: 10px;
+  background-color: rgb(182, 238, 255);
+}
+
+p {
+    padding: 0 5px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    min-width: 100px;
+    padding: 10px;
+    text-align: left;
+}
+
+.short-text {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.long-text {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+thead tr {
+    border-bottom: 3px double #888;
+}
+
+tbody tr {
+    border-bottom: 1px solid #888;
+}
+
+.numeric {
+    text-align: right;
+}
+
+td input {
+    padding: 0;
+    border: none;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+tr:hover {
+    background-color: aquamarine;
+}
+
+.edit {
+    background-color: aqua;
+}
+
+.edit:hover {
+    color: white;
+}
+
+.delete {
+    background-color: red;
+}
+
+.delete:hover {
+    color: white;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: min(600px, 100%);
+}
+
+form input {
+    border: none;
+    border-bottom: 1px solid black;
+    margin-bottom: 10px;
+}
+
+.button,
+form input, 
+form label, 
+form button, 
+form textarea,
+form select {
+    padding: 5px 10px;
+}
+
+form .error {
+    padding: 0 10px;
+    margin-bottom: 10px;
+    color: rgb(150, 0, 0);
+}
+
+.button,
+form button {
+    align-self: flex-start;
+    background-color: aqua;
+    border: none;
+    border-radius: 5px;
+    min-width: 100px;
+}
+
+.button:hover,
+form button:hover {
+    color: white;
+}
+
+.button {
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+    color: black
+}
+
+form textarea {
+    resize: none;
+    height: 100px;
+    border: none;
+    border-bottom: 1px solid black;
+    margin-bottom: 10px;
+    background-color: #e7e7e7;
+}
+
+form select {
+    border: none;
+    border-bottom: 1px solid black;
+    margin-bottom: 10px;
+}
