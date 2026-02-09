@@ -7,6 +7,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -36,7 +37,9 @@ class CommentController extends Controller
 
         $this->authorize('viewPremiumContent', $post);
 
-        auth()->user()->comments()->create($validated);
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $user->comments()->create($validated);
 
         return back();
     }

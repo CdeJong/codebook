@@ -5,6 +5,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PremiumController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
 
@@ -35,7 +37,7 @@ Route::middleware('guest')->group(function () {
 
 // requires to be logged in
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [AuthenticationController::class, 'profileView'])->name('auth.profile'); // /user/me?
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/auth/logout', [AuthenticationController::class, 'logout'])->name('auth.logout');
 
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
@@ -56,6 +58,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // public pages
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'show'])->name('home.show');
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
 Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
+Route::get('/premium', [PremiumController::class, 'show'])->name('premium.show');

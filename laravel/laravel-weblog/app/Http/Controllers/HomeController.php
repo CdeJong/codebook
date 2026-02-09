@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class HomeController
 {
-    public function index() {
+    public function show() {
         $pinned_posts = Post::where('is_pinned', true)->inRandomOrder()->limit(3)->get();
         $posts_category = Category::inRandomOrder()->first(); // 'category' as name caused scoping issues as it already is used in the blade
         $category_posts = $posts_category->posts()->inRandomOrder()->limit(3)->get();

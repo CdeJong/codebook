@@ -6,11 +6,9 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Routing\Controller;
 use App\Models\User;
 
-class AuthenticationController extends Controller
-{
+class AuthenticationController {
     
     public function loginView() {
         return view('authentication.login');
@@ -26,7 +24,7 @@ class AuthenticationController extends Controller
         if (Auth::attempt($validated)) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('auth.profile'));
+            return redirect()->intended(route('profile.show'));
         }
 
         return back()->withErrors([
@@ -40,21 +38,14 @@ class AuthenticationController extends Controller
 
         User::create($validated);
 
-        return redirect(route('login'));
+        return redirect()->route('login');
     }
 
     public function logout(Request $request) {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect(route('home'));
+        return redirect()->route('home.show');
     }
-
-    public function profileView() {
-        $posts = auth()->user()->posts()->latest()->get();
-        return view('authentication.profile', compact('posts'));
-    }
-
-
 
 }

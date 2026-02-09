@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -46,13 +47,15 @@ class PostController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StorePostRequest $request) {
-        $post = auth()->user()->posts()->create(
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $post = $user->posts()->create(
             $request->validated()
         );
 
         $post->categories()->sync($request->validated('categories'));
 
-        return redirect(route('posts.show', ['slug' => $post->slug, 'post' => $post]));
+        return redirect()->route('posts.show', $post);
     }
 
     /**
@@ -77,7 +80,7 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post) {
         $post->update($request->validated());
         $post->categories()->sync($request->validated('categories'));
-        return redirect(route('posts.show', ['slug' => $post->slug, 'post' => $post]));
+        return redirect()->route('posts.show', $post);
     }
 
     /**

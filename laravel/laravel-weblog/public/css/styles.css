@@ -173,8 +173,6 @@ header button:hover {
     background-color: gold;
 }
 
-
-
 .post img {
     width: 100%;
     height: 200px;
@@ -347,4 +345,57 @@ header button:hover {
 .comment-author {
     flex-grow: 1;
     font-weight: bold;
+}
+
+.plans {
+    display: flex;
+    justify-content: space-around;
+}
+
+.plan {
+    min-width: 250px;
+    padding: 0 0.5em 0.5em 0.5em;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    align-items: center;
+}
+
+.plan-header {
+    color: white;
+    background-color: black;
+    width: 100%;
+    padding: 0.5em;
+    text-align: center;
+}
+
+.plan-price {
+    display: flex;
+    margin: 20px 0;
+}
+
+.plan-price .currency {
+    align-self: flex-start;
+    line-height: 1;
+    padding-top: 0.4em;
+}
+
+.plan-price .amount {
+    font-size: 3em;
+    line-height: 1;
+}
+
+.plan-price .period {
+    align-self: flex-end;
+    line-height: 1;
+    padding-bottom: 0.4em;
+}
+
+.plan-title {
+    font-size: 1.4em;
+}
+
+.plan-description {
+    margin: 10px 0;
+    text-align: center;
 }

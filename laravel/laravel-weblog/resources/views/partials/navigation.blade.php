@@ -1,7 +1,7 @@
 <header>
     <nav class="container">
         <ul>
-            <li><a href="{{ route('home') }}">Home</a></li>
+            <li><a href="{{ route('home.show') }}">Home</a></li>
             <li><a href="{{ route('posts.index') }}">Posts</a></li>
 @can('viewAny', App\Models\Category::class)            
             <li><a href="{{ route('categories.index') }}">Categories</a></li>
@@ -9,8 +9,9 @@
         </ul>
 
         <ul>
+            <li style="align-content: center;"><div><a class="button premium" href="{{ route('premium.show') }}">GET PREMIUM</a></div></li>
 @auth
-            <li><a href="{{ route('auth.profile') }}">{{ auth()->user()->username }}</a></li>
+            <li><a href="{{ route('profile.show') }}">{{ auth()->user()->username }}</a></li>
             <li>
                 <form action="{{ route('auth.logout') }}" method="POST">
                     @csrf
