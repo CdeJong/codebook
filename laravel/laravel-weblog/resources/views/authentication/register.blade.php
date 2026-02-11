@@ -3,8 +3,10 @@
 @section('title', 'Register')
 
 @section('content')
-    <div class="title-bar">
-        <h1 class="title">Register: Create a new account!</h1>
+    <div class="content-header">
+        <div class="primary-header">
+            <h1 class="title">Register: Create a new account!</h1>
+        </div>
     </div>
     
     <form class="form" action="{{ route('auth.register') }}" method="POST">

@@ -34,8 +34,8 @@ class StorePostRequest extends FormRequest
             'content' => 'required|max:4000',
             'categories' => 'required|array',
             'categories.*' => 'integer|exists:categories,id',
-            'is_pinned' => 'required|boolean',
-            'is_premium' => 'required|boolean'
+            'is_pinned' => 'boolean',
+            'is_premium' => 'boolean'
         ];
     }
 }

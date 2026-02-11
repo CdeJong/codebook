@@ -3,9 +3,12 @@
 @section('title', 'Categories')
 
 @section('content')
-    <div class="title-bar">
-        <h1 class="title">Categories</h1>
-        <a class="button" href="{{ route('categories.create') }}">Create New Category</a>
+
+    <div class="content-header">
+        <div class="primary-header">
+            <h1 class="title">Categories</h1>
+            <a class="button" href="{{ route('categories.create') }}">Create New Category</a>
+        </div>
     </div>
     
     <table class="table">

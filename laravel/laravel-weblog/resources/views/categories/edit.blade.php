@@ -3,13 +3,16 @@
 @section('title', 'Edit Category')
 
 @section('content')
-    <div class="title-bar">
-        <h1 class="title">Update category / {{ $category->name }}</h1>
-        <form action="{{ route('categories.destroy', $category) }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button class="button delete" type="submit">Delete</button>
-        </form>
+
+    <div class="content-header">
+        <div class="primary-header">
+            <h1 class="title">Update category / {{ $category->name }}</h1>
+            <form action="{{ route('categories.destroy', $category) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <button class="button delete" type="submit">Delete</button>
+            </form>
+        </div>
     </div>
     
     <form class="form" action="{{ route('categories.update', $category) }}" method="POST">

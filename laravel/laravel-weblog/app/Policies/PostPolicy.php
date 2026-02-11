@@ -41,6 +41,14 @@ class PostPolicy
         return !$post->is_premium || $user->has_premium;
     }
 
+    public function setPinned(User $user) {
+        return false; // admin only for now
+    }
+
+    public function setPremium(User $user) {
+        return true; // everyone can create premium posts
+    }
+
     /**
      * Determine whether the user can create models.
      */

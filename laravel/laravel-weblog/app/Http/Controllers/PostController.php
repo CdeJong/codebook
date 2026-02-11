@@ -49,10 +49,19 @@ class PostController extends Controller
     public function store(StorePostRequest $request) {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        $post = $user->posts()->create(
+        $post = $user->posts()->make(
             $request->validated()
         );
 
+        if ($user->can('setPinned', Post::class)) {
+            $post->is_pinned = $request->validated('is_pinned');
+        }
+
+        if ($user->can('setPremium', Post::class)) {
+            $post->is_premium = $request->validated('is_premium');
+        }
+
+        $post->save();
         $post->categories()->sync($request->validated('categories'));
 
         return redirect()->route('posts.show', $post);
@@ -78,8 +87,22 @@ class PostController extends Controller
      * Update the specified resource in storage.
      */
     public function update(UpdatePostRequest $request, Post $post) {
-        $post->update($request->validated());
+        /** @var \App\Models\User $user */
+        $user = Auth::user();        
+
+        $post->fill($request->validated());
+
+        if ($user->can('setPinned', Post::class)) {
+            $post->is_pinned = $request->validated('is_pinned');
+        }
+
+        if ($user->can('setPremium', Post::class)) {
+            $post->is_premium = $request->validated('is_premium');
+        }
+
+        $post->save();
         $post->categories()->sync($request->validated('categories'));
+        
         return redirect()->route('posts.show', $post);
     }
 

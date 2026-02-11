@@ -3,19 +3,33 @@
 @section('title', 'Post')
 
 @section('content')
-    <div class="title-bar">
-        <h1 class="title">Posts / {{ $post->title }}</h1>
+    <div class="content-header">
+        <div class="primary-header">
+            <h1 class="title">Posts / {{ $post->title }}</h1>
 @can('update', $post)        
-        <a class="button" href="{{ route('posts.edit', $post) }}">Edit</a>
+            <a class="button" href="{{ route('posts.edit', $post) }}">Edit</a>
 @endcan
 @can('delete', $post)        
-        <form action="{{ route('posts.destroy', $post) }}" method="POST">
-            @csrf
-            @method("DELETE")
-            <button class="button delete" type="submit">Delete</button>
-        </form>
-@endcan       
+            <form action="{{ route('posts.destroy', $post) }}" method="POST">
+                @csrf
+                @method("DELETE")
+                <button class="button delete" type="submit">Delete</button>
+            </form>
+@endcan
+        </div>
+        <div class="secondary-header">
+            <p class="title">Posted by {{ $post->user->username }} at {{ $post->fancy_created_at }}</p>
+            <div>
+@if($post->is_pinned)
+            <div class="featured">FEATURED</div>
+@endif
+@if($post->is_premium)
+            <div class="premium">PREMIUM</div>
+@endif
+            </div>
+        </div>
     </div>
+
 @can('viewPremiumContent', $post)    
     <div class="post-content markdown-body">
         {!! $post->content_html !!}

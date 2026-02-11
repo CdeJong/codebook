@@ -19,9 +19,7 @@ class Post extends Model {
 
     protected $fillable = [
         "title",
-        "content",
-        "is_premium",
-        "is_pinned" # TODO add some policy so only admins can do this
+        "content"
     ];
 
     protected $casts = [

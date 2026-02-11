@@ -59,7 +59,60 @@ header button:hover {
     background-color: #01e8e8;
 }
 
-.title-bar {
+.content-header {
+    margin: 0.5em 0;
+}
+
+.primary-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: rgb(182, 238, 255);
+    min-height: 45px;
+}
+
+.secondary-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: rgb(214, 242, 255);
+    min-height: 40px;
+}
+
+.primary-header .title {
+    font-size: 16px;
+    flex-grow: 1;
+    margin-left: 0.5em;
+}
+
+.primary-header > * {
+    margin-right: 0.5em;
+}
+
+.secondary-header .title {
+    font-size: 15px;
+    flex-grow: 1;
+    margin-left: 0.5em;
+}
+
+.secondary-header > * {
+    margin-right: 0.5em;
+}
+
+.secondary-header form {
+    display: flex;
+    gap: 0.5em;
+}
+
+.secondary-header form select {
+    font-size: 15px;
+    background-color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+/* .title-bar {
     display: flex;
     align-items: center;
     margin: 0.5em 0;
@@ -102,6 +155,14 @@ header button:hover {
     padding: 5px 10px;
     border-radius: 5px;
     border: none;
+} */
+
+.page-content {
+    padding: 0 5px;
+}
+
+.page-content ul {
+    padding-left: 2em;
 }
 
 .table {
@@ -348,13 +409,15 @@ header button:hover {
 }
 
 .plans {
-    display: flex;
-    justify-content: space-around;
+    margin-top: 0.5em;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5em;
 }
 
 .plan {
-    min-width: 250px;
-    padding: 0 0.5em 0.5em 0.5em;
+    min-width: 0;
+    padding: 0 0.5em;
     display: flex;
     flex-direction: column;
     border: 1px solid black;
@@ -396,6 +459,10 @@ header button:hover {
 }
 
 .plan-description {
-    margin: 10px 0;
+    margin-bottom: 10px;
     text-align: center;
+}
+
+.plan .button {
+    margin-bottom: 10px;
 }

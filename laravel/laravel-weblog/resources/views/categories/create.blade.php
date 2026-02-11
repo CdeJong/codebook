@@ -3,8 +3,10 @@
 @section('title', 'Create Category')
 
 @section('content')
-    <div class="title-bar">
-        <h1 class="title">Create a new category</h1>
+    <div class="content-header">
+        <div class="primary-header">
+            <h1 class="title">Create a new category</h1>
+        </div>
     </div>
     
     <form class="form" action="{{ route('categories.store') }}" method="POST">

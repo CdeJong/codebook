@@ -47,6 +47,7 @@ class User extends Authenticatable {
     protected function casts(): array
     {
         return [
+            'premium_expires_at' => 'datetime',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
