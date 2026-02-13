@@ -19,14 +19,19 @@ class PostFactory extends Factory
      */
     public function definition(): array
     {
+
         $title = $this->faker->sentence();
         $slug = Str::slug($title);
+        $user = User::inRandomOrder()->first();
+
+        $is_premium = $this->faker->boolean(25);
+        $is_pinned = $user->is_admin ? $this->faker->boolean(50) : false;
 
         return [
-            'user_id' => User::inRandomOrder()->first()->id,
+            'user_id' => $user->id,
             'image_id' => null,
-            'is_premium' => false,
-            'is_pinned' => false,
+            'is_premium' => $is_premium,
+            'is_pinned' => $is_pinned,
             'title' => $title,
             'slug' => $slug,
             'content' => $this->faker->text()

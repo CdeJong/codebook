@@ -193,6 +193,7 @@ header button:hover {
 }
 
 .post img {
+    display: inline-block; /* otherwise height doesn't work */  
     width: 100%;
     height: 200px;
     min-height: 200px;
