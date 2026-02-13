@@ -5,7 +5,6 @@ namespace App\Observers;
 use App\Models\Post;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
 
 class PostObserver {
 

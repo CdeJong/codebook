@@ -8,6 +8,7 @@ use App\Observers\CommentObserver;
 use App\Services\MarkdownService;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Support\Facades\Cache;
+use App\Support\DateTimeFormatter;
 
 #[ObservedBy(CommentObserver::class)]
 class Comment extends Model {
@@ -26,6 +27,14 @@ class Comment extends Model {
             now()->addHours(6),
             fn () => app(MarkdownService::class)->render($this->content)
         );
+    }
+
+    public function getFormattedCreatedAtAttribute(): string {
+        return DateTimeFormatter::format($this->created_at);
+    }
+
+    public function getFormattedUpdatedAtAttribute(): string {
+        return DateTimeFormatter::format($this->updated_at);
     }
 
     public function post() {

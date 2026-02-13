@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -31,8 +32,15 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true
         ]);
 
+        User::factory()->create([
+            'username' => 'Premium User',
+            'email' => 'premium@example.com',
+            'premium_expires_at' => \Carbon\Carbon::now()->addYear()
+        ]);
+
         Image::factory()->create([
             'filename' => 'example.png',
+            'public_id' => Str::random(16),
             'description' => 'This is a nice example image'
         ]);
 

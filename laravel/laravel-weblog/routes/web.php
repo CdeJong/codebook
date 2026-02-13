@@ -4,11 +4,13 @@ use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PremiumController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
+use App\Models\Image;
 
 
 // slug support for {post} argument
@@ -23,6 +25,10 @@ Route::bind('post', function ($value) {
     }
 
     abort(404);
+});
+
+Route::bind('image', function ($value) {
+    return Image::where('public_id', $value)->firstOrFail();
 });
 
 
@@ -64,3 +70,5 @@ Route::get('/', [HomeController::class, 'show'])->name('home.show');
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
 Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 Route::get('/premium', [PremiumController::class, 'show'])->name('premium.show');
+
+Route::get('/images/{image}/{filename}', [ImageController::class, 'show'])->name('images.show');

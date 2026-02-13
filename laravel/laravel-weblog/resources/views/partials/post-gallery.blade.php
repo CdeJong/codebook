@@ -9,7 +9,8 @@
             <div class="premium">PREMIUM</div>
 @endif
         </div>
-        <img src="{{ asset('temp/images/banner.jpg') }}" alt="temp image while im implementing this feature">
+        <!-- WORK IN PROGRESS todo -->
+        <img src="{{ $post->image !== null ? route('images.show', ['image' => $post->image->public_id, 'filename' => $post->image->filename]) : '#' }}" alt="{{ $post->image !== null ? $post->image->description : 'no image' }}">
         <div class="post-bottom">
             <div class="post-meta">
                 <h2 class="post-title" title="{{ $post->title }}">{{ $post->title }}</h2>
@@ -19,7 +20,7 @@
 @endforeach                        
                 </div>
                 <div class="post-author">{{ $post->user->username }}</div>
-                <div class="post-time" title="Created at {{ $post->fancy_created_at }}, Last updated at {{ $post->fancy_updated_at }}">{{ $post->fancy_created_at }}</div>
+                <div class="post-time" title="Created at {{ $post->formatted_created_at }}, Last updated at {{ $post->formatted_updated_at }}">{{ $post->formatted_created_at }}</div>
             </div>
         </div>
     </a>

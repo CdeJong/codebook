@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use App\Policies\PostPolicy;
+use App\Support\DateTimeFormatter;
 
 #[ObservedBy(PostObserver::class)]
 #[UsePolicy(PostPolicy::class)]
@@ -41,25 +42,13 @@ class Post extends Model {
         );
     }
 
-    public function getFancyCreatedAtAttribute(): string {
-        return Post::fancyTimeFormat($this->created_at);
+    public function getFormattedCreatedAtAttribute(): string {
+        return DateTimeFormatter::format($this->created_at);
     }
 
-    public function getFancyUpdatedAtAttribute(): string {
-        return Post::fancyTimeFormat($this->updated_at);
+    public function getFormattedUpdatedAtAttribute(): string {
+        return DateTimeFormatter::format($this->updated_at);
     }
-
-    private static function fancyTimeFormat($timestamp) : string {
-        if ($timestamp->isToday()) {
-            return "Today at " . $timestamp->format('H:i');
-        } elseif ($timestamp->isYesterday()) {
-            return "Yesterday at " . $timestamp->format('H:i');
-        } elseif ($timestamp->isCurrentWeek()) {
-            return $timestamp->format('l') . " at " . $timestamp->format('H:i'); // e.g., Tuesday at 10:05
-        } else {
-            return $timestamp->format('j F') . " at " . $timestamp->format('H:i'); // e.g., 8 January at 10:05
-        }
-    } 
 
     // author
     public function user() {
@@ -71,7 +60,7 @@ class Post extends Model {
     }
 
     public function image() {
-        return $this->hasOne(Image::class);
+        return $this->belongsTo(Image::class);
     }
 
     public function categories() {

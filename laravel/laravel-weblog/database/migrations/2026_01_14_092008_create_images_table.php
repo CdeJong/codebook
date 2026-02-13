@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
+            $table->string('public_id')->unique();
             $table->string('filename');
-            $table->text('description'); // could be string?
+            $table->string('description');
             $table->timestamps();
         });
     }

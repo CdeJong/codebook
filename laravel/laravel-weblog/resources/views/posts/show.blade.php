@@ -18,13 +18,13 @@
 @endcan
         </div>
         <div class="secondary-header">
-            <p class="title">Posted by {{ $post->user->username }} at {{ $post->fancy_created_at }}</p>
-            <div>
+            <p class="title">Posted by {{ $post->user->username }} at {{ $post->formatted_created_at }}</p>
+            <div class="post-ribbons">
 @if($post->is_pinned)
-            <div class="featured">FEATURED</div>
+                <div class="featured">FEATURED</div>
 @endif
 @if($post->is_premium)
-            <div class="premium">PREMIUM</div>
+                <div class="premium">PREMIUM</div>
 @endif
             </div>
         </div>
@@ -36,7 +36,7 @@
     </div>
 @else
     <div class="post-content">
-        Oops this is a premium post! Get Premium to read all our premium content! <a class="button premium" href="#">Get Premium</a>
+        <p>Oops this is a premium post! Get Premium to read all our premium content! <a class="button premium" href="#">Get Premium</a>
     </div>
 @endcan    
 
@@ -70,8 +70,9 @@
         <div class="comment">
             <div class="comment-header">
                 <div class="comment-author">{{ $comment->user->username }}</div>
-                <div class="comment-time">{{ $comment->created_at->diffForHumans() }}</div>
+                <div class="comment-time">{{ $comment->formatted_created_at }}</div>
             </div>
+            <hr>
             <div class="comment-content markdown-body">{!! $comment->content_html !!}</div>
         </div>
 @endforeach        
