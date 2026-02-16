@@ -16,7 +16,7 @@ class Comment extends Model {
     use HasFactory;
     
     protected $fillable = [
-        "post_id", // TODO validate if the current user can post here
+        "post_id", // gets validated in store, I wanted to use a policy, but there is no way to cleanly access $post
         "content"
     ];
 
