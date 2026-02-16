@@ -5,8 +5,13 @@
 @section('content')
     <div class="content-header">
         <div class="primary-header">
-            <h1 class="title">Register: Create a new account!</h1>
+            <h1 class="title">Registration</h1>
         </div>
+    </div>
+
+    <div class="page-content">
+        <p>Join our community today! Create your account to start posting, commenting, and enjoying exclusive premium perks.</p>
+        <p>Already have an account? <a href="{{ route('login') }}">Log in here</a> and jump right back in!</p>
     </div>
     
     <form class="form" action="{{ route('auth.register') }}" method="POST">
