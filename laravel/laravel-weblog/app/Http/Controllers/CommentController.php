@@ -39,9 +39,9 @@ class CommentController extends Controller
 
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        $user->comments()->create($validated);
+        $comment = $user->comments()->create($validated);
 
-        return back();
+        return redirect()->route('posts.show', $post)->withFragment('comment-' . $comment->id);
     }
 
     /**
@@ -63,6 +63,7 @@ class CommentController extends Controller
      */
     public function update(Request $request, string $id) {
         // unused for now
+        // implementation note: be sure to check $this->authorize('viewPremiumContent', $post);
     }
 
     /**
