@@ -30,13 +30,17 @@
         </div>
     </div>
 
+    <img class="post-image image" onload="this.classList.add('loaded')" src="{{ $post->image_url }}" alt="{{ $post->image_description }}">
+
 @can('viewPremiumContent', $post)    
     <div class="post-content markdown-body">
         {!! $post->content_html !!}
     </div>
 @else
     <div class="post-content">
-        <p>Oops this is a premium post! Get Premium to read all our premium content! <a class="button premium" href="#">Get Premium</a>
+        <p>Oops! This is a premium post. Unlock all our premium content by getting <strong>Premium</strong> today!</p>
+        <br>
+        <p><a href="{{ route('premium.show') }}">Upgrade to Premium</a> and start enjoying exclusive posts now.</p>
     </div>
 @endcan    
 
@@ -67,7 +71,7 @@
     <div class="comments">
         <h3 class="comments-title">Comments ({{ count($comments) }}):</h3>
 @foreach($comments as $comment)
-        <div class="comment">
+        <div class="comment" id="comment-{{ $comment->id }}">
             <div class="comment-header">
                 <div class="comment-author">{{ $comment->user->username }}</div>
                 <div class="comment-time">{{ $comment->formatted_created_at }}</div>

@@ -14,7 +14,8 @@
         </div>
     </div>
 
-    <form class="form" action="{{ route('posts.update', $post) }}" method="POST">
+    {{-- enctype is needed for images --}}
+    <form class="form" action="{{ route('posts.update', $post) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <label for="title">Title</label>
@@ -41,7 +42,9 @@
             <input type="checkbox" name="is_pinned" id="is_pinned" {{ $post->is_pinned ? 'checked' : '' }}>
             <label for="is_pinned">Featured Post</label>
         </div>
-@endcan          
+@endcan
+        <label for="image">Image</label>
+        <input type="file" name="image" id="image" accept="image/*">           
               
 @if ($errors->any())
         <div class="error-list">

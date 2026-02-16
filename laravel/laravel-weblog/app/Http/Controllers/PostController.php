@@ -6,10 +6,15 @@ use App\Http\Requests\IndexPostRequest;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Category;
+use App\Models\Image;
 use App\Models\Post;
 use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -61,6 +66,22 @@ class PostController extends Controller
             $post->is_premium = $request->validated('is_premium');
         }
 
+        $uploaded_image = $request->validated('image');
+        if ($uploaded_image !== null) {
+            // just to be sure the user doesnt break anything
+            $file_name = Str::slug($uploaded_image->getClientOriginalName()) . $uploaded_image->extension();
+
+            $image = Image::create([
+                "filename" => $file_name,
+                "description" => "Post Image; " . $post->title
+            ]);
+
+            $file_system = Storage::disk('private');
+            $file_system->putFileAs('', $uploaded_image, $image->public_id);
+
+            $post->image_id = $image->id;
+        }
+
         $post->save();
         $post->categories()->sync($request->validated('categories'));
 
@@ -100,6 +121,8 @@ class PostController extends Controller
             $post->is_premium = $request->validated('is_premium');
         }
 
+        $this->setImage($post, $request);
+
         $post->save();
         $post->categories()->sync($request->validated('categories'));
         
@@ -110,7 +133,49 @@ class PostController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(Post $post) {
+        $this->deleteImage($post); // delete the current image if present
         $post->delete();
         return redirect()->route('posts.index');
+    }
+
+    private function setImage(Post $post, FormRequest $request) {
+        $uploaded_image = $request->validated('image');
+        if ($uploaded_image !== null) {
+            // just to be sure the user doesnt break anything
+            $file_name = pathinfo($uploaded_image->getClientOriginalName(), PATHINFO_FILENAME);
+            $final_name = Str::slug($file_name) . '.' . $uploaded_image->extension();
+
+            $image = Image::create([
+                "filename" => $final_name,
+                "description" => "Post Image; " . $post->title
+            ]);
+
+            // delete current
+            $this->deleteImage($post); 
+
+            // save file to disk
+            $file_system = Storage::disk('private');
+            $file_system->putFileAs('', $uploaded_image, $image->public_id);
+            // update post image (saving is done outside of this method)
+            $post->image_id = $image->id;
+        }
+    }
+
+    private function deleteImage(Post $post) {
+        $current_image = $post->image;
+        if ($current_image === null) {
+            return;
+        }
+        // don't remove images which are used by multiple posts (created by Seeder)
+        if (App::isLocal() && str_starts_with($current_image->public_id, "default-")) {
+            return;
+        }
+        
+        // get image disk
+        $file_system = Storage::disk('private');
+        // delete from disk
+        $file_system->delete($current_image->public_id);
+        // delete from database
+        $current_image->delete();
     }
 }

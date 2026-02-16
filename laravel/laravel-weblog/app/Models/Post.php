@@ -16,6 +16,9 @@ use App\Support\DateTimeFormatter;
 #[UsePolicy(PostPolicy::class)]
 class Post extends Model {
 
+    private const DEFAULT_IMAGE_PATH = 'image/default-no-image-found.png';
+    private const DEFAULT_IMAGE_DESCRIPTION = "Default image; No image was set or found";
+
     use HasFactory;
 
     protected $fillable = [
@@ -34,12 +37,32 @@ class Post extends Model {
     }
 
     // markdown output as html
-    public function getContentHtmlAttribute(): string {
+    public function getContentHtmlAttribute() : string {
         return Cache::remember(
             "post:{$this->id}:content_html",
             now()->addHours(6),
             fn () => app(MarkdownService::class)->render($this->content)
         );
+    }
+
+    public function getImageUrlAttribute() : string {
+        $image = $this->image;
+
+        if ($image === null) {
+            return asset(self::DEFAULT_IMAGE_PATH);
+        }
+
+        return $image->url;
+    }
+
+    public function getImageDescriptionAttribute() : string {
+        $image = $this->image;
+
+        if ($image === null) {
+            return self::DEFAULT_IMAGE_DESCRIPTION;
+        }
+
+        return $image->description;
     }
 
     public function getFormattedCreatedAtAttribute(): string {

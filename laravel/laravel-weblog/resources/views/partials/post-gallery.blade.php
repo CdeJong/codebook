@@ -9,8 +9,8 @@
             <div class="premium">PREMIUM</div>
 @endif
         </div>
-        <!-- WORK IN PROGRESS todo -->
-        <img src="{{ $post->image !== null ? route('images.show', ['image' => $post->image->public_id, 'filename' => $post->image->filename]) : '#' }}" alt="{{ $post->image !== null ? $post->image->description : 'no image' }}">
+        {{-- ye, I know, inline javascript :(, but its kinda overkill to have a separate file for this --}}
+        <img class="image" onload="this.classList.add('loaded')" src="{{ $post->image_url }}" alt="{{ $post->image_description }}">
         <div class="post-bottom">
             <div class="post-meta">
                 <h2 class="post-title" title="{{ $post->title }}">{{ $post->title }}</h2>

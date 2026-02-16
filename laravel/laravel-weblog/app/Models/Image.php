@@ -12,8 +12,19 @@ class Image extends Model {
 
     use HasFactory;
 
-    public function getRouteKeyName() : string {
-        return $this->public_id; // todo
+    protected $fillable = [
+        "filename",
+        "description"
+    ];
+
+    public function getRouteKey() : string {
+        return $this->public_id;
     }
+
+    public function getUrlAttribute() {
+        return route('images.show', [$this, 'filename' => $this->filename]);
+    }
+
+    
     
 }

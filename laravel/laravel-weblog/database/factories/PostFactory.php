@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
-use App\Models\Category;
+use App\Models\Image;
 use Illuminate\Support\Str;
 
 /**
@@ -27,9 +27,11 @@ class PostFactory extends Factory
         $is_premium = $this->faker->boolean(25);
         $is_pinned = $user->is_admin ? $this->faker->boolean(50) : false;
 
+        $image = Image::inRandomOrder()->first();
+
         return [
             'user_id' => $user->id,
-            'image_id' => null,
+            'image_id' => $image->id,
             'is_premium' => $is_premium,
             'is_pinned' => $is_pinned,
             'title' => $title,

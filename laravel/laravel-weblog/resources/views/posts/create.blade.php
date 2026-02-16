@@ -9,7 +9,8 @@
         </div>
     </div>
 
-    <form class="form" action="{{ route('posts.store') }}" method="POST">
+    {{-- enctype is needed for images --}}
+    <form class="form" action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <label for="title">Title</label>
         <input type="text" name="title" id="title" value="{{ old('title') }}" required>
@@ -32,7 +33,9 @@
             <input type="checkbox" name="is_pinned" id="is_pinned" {{ empty(old('is_pinned')) ? '' : 'checked="on"' }}>
             <label for="is_pinned">Featured Post</label>
         </div>
-@endcan        
+@endcan
+        <label for="image">Image</label>
+        <input type="file" name="image" id="image" accept="image/*">        
 
 @if ($errors->any())
         <div class="error-list">

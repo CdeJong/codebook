@@ -38,13 +38,8 @@ class DatabaseSeeder extends Seeder
             'premium_expires_at' => \Carbon\Carbon::now()->addYear()
         ]);
 
-        Image::factory()->create([
-            'filename' => 'example.png',
-            'public_id' => Str::random(16),
-            'description' => 'This is a nice example image'
-        ]);
-
         $this->call([
+            ImageSeeder::class,
             CategorySeeder::class,
             PostSeeder::class,
             CommentSeeder::class
