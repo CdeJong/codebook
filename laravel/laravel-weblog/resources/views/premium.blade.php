@@ -36,7 +36,7 @@
             </div>
             <form action="{{ route('premium.subscribe') }}" method="POST">
                 @csrf
-                <input type="hidden" name="plan" value="1_month">
+                <input type="hidden" name="duration_in_months" value="1">
                 <button type="submit" class="button">Select</button>
             </form>
         </div>
@@ -54,7 +54,7 @@
             </div>
             <form action="{{ route('premium.subscribe') }}" method="POST">
                 @csrf
-                <input type="hidden" name="plan" value="12_month">
+                <input type="hidden" name="duration_in_months" value="12">
                 <button type="submit" class="button">Select</button>
             </form>
         </div>

@@ -15,21 +15,12 @@ class SubscribePremiumRequest extends FormRequest
         return true;
     }
 
-    protected function prepareForValidation() {
-        $plan = $this->input('plan');
-
-        # TODO maybe just remove this?
-
-        $duration_in_months = -1;
-        if ($plan === '12_month') {
-            $duration_in_months = 12;
-        } else if ($plan === '1_month') {
-            $duration_in_months = 1;
+    protected function prepareForValidation()
+    {
+        // check if it exists as intval otherwise defaults to zero
+        if ($this->has('duration_in_months')) {
+            $this->merge(['duration_in_months' => intval($this->duration_in_months)]);
         }
-
-        $this->merge([
-            'duration_in_months' => $duration_in_months
-        ]);
     }
 
     /**
