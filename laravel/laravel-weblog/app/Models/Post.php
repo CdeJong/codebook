@@ -19,9 +19,8 @@ class Post extends Model {
 
     use HasFactory;
 
-    // ran on first model usage
     protected static function booted() {
-        // runs on fist model usages; registers model event handlers
+        // runs on first model usages; registers model event handlers
         static::creating(static::updateSlug(...));
         static::updating(static::updateSlug(...));
         static::saved(static::forgetCache(...));

@@ -12,9 +12,8 @@ class Comment extends Model {
 
     use HasFactory;
 
-    // ran on first model usage
     protected static function booted() {
-        // runs on fist model usages; registers model event handlers
+        // runs on first model usages; registers model event handlers
         static::saved(static::forgetCache(...));
         static::deleted(static::forgetCache(...));
     }
