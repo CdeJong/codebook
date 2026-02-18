@@ -66,21 +66,7 @@ class PostController extends Controller
             $post->is_premium = $request->validated('is_premium');
         }
 
-        $uploaded_image = $request->validated('image');
-        if ($uploaded_image !== null) {
-            // just to be sure the user doesnt break anything
-            $file_name = Str::slug($uploaded_image->getClientOriginalName()) . $uploaded_image->extension();
-
-            $image = Image::create([
-                "filename" => $file_name,
-                "description" => "Post Image; " . $post->title
-            ]);
-
-            $file_system = Storage::disk('private');
-            $file_system->putFileAs('', $uploaded_image, $image->public_id);
-
-            $post->image_id = $image->id;
-        }
+        $this->setImage($post, $request);
 
         $post->save();
         $post->categories()->sync($request->validated('categories'));
