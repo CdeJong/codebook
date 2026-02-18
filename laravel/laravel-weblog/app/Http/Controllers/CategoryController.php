@@ -40,13 +40,6 @@ class CategoryController extends Controller {
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id) {
-        // unused
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Category $category) {

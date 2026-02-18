@@ -57,7 +57,7 @@ class PostController extends Controller
         $post = $user->posts()->make(
             $request->validated()
         );
-
+            
         if ($user->can('setPinned', Post::class)) {
             $post->is_pinned = $request->validated('is_pinned');
         }
@@ -65,7 +65,7 @@ class PostController extends Controller
         if ($user->can('setPremium', Post::class)) {
             $post->is_premium = $request->validated('is_premium');
         }
-
+            
         $this->setImage($post, $request);
 
         $post->save();
@@ -131,15 +131,14 @@ class PostController extends Controller
             $file_name = pathinfo($uploaded_image->getClientOriginalName(), PATHINFO_FILENAME);
             $final_name = Str::slug($file_name) . '.' . $uploaded_image->extension();
 
-            $image = Image::create([
-                "filename" => $final_name,
-                "description" => "Post Image; " . $post->title
-            ]);
+            $image = new Image();
+            $image->filename = $final_name;
+            $image->desciption = "Post Image; " . $post->title; // image alt text
+            $image->public_id = Str::random(16);
+            $image->save();
 
-            // delete current
-            $this->deleteImage($post); 
+            $this->deleteImage($post);
 
-            // save file to disk
             $file_system = Storage::disk('private');
             $file_system->putFileAs('', $uploaded_image, $image->public_id);
             // update post image (saving is done outside of this method)
@@ -157,11 +156,8 @@ class PostController extends Controller
             return;
         }
         
-        // get image disk
         $file_system = Storage::disk('private');
-        // delete from disk
         $file_system->delete($current_image->public_id);
-        // delete from database
         $current_image->delete();
     }
 }

@@ -6,29 +6,7 @@ use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class ImageController
-{
-    /**
-     * Display a listing of the resource.
-     */
-    public function index() {
-        // unused
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {
-        // post.create
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {
-        // unused?
-    }
-
+class ImageController {
     /**
      * Display the specified resource.
      */
@@ -53,25 +31,4 @@ class ImageController
         return response($file_content, 200)->header('Content-Type', $file_mime);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id) {
-        // post.edit
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id) {
-        // unused?
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        // unused
-    }
 }

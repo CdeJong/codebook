@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use App\Observers\PostObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\MarkdownService;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use App\Policies\PostPolicy;
 use App\Support\DateTimeFormatter;
+use Illuminate\Support\Str;
 
-#[ObservedBy(PostObserver::class)]
 #[UsePolicy(PostPolicy::class)]
 class Post extends Model {
 
@@ -20,6 +18,24 @@ class Post extends Model {
     private const DEFAULT_IMAGE_DESCRIPTION = "Default image; No image was set or found";
 
     use HasFactory;
+
+    // ran on first model usage
+    protected static function booted() {
+        // runs on fist model usages; registers model event handlers
+        static::creating(static::updateSlug(...));
+        static::updating(static::updateSlug(...));
+        static::saved(static::forgetCache(...));
+        static::deleted(static::forgetCache(...));
+    }
+
+    // model event handlers
+    public static function updateSlug(Post $post): void {
+        $post->slug = Str::slug($post->title); // update slug before saving on update
+    }
+
+    public static function forgetCache(Post $post): void {
+        Cache::forget("post:{$post->id}:content_html"); // forget markdown cache
+    }
 
     protected $fillable = [
         "title",

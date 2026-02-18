@@ -28,10 +28,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Post::observe(PostObserver::class);
-        Comment::observe(CommentObserver::class);
-
         Gate::policy(Category::class, CategoryPolicy::class);
-        Gate::policy(Post::class, PostPolicy::class); // note: does not authorize model like Category
+        Gate::policy(Post::class, PostPolicy::class);
     }
 }

@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Category;
-use Illuminate\Http\Request;
 
-class HomeController
-{
+
+class HomeController {
+    
     public function show() {
         $pinned_posts = Post::where('is_pinned', true)->inRandomOrder()->limit(3)->get();
         $posts_category = Category::inRandomOrder()->first(); // 'category' as name caused scoping issues as it already is used in the blade

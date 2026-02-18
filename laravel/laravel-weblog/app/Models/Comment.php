@@ -4,17 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Observers\CommentObserver;
 use App\Services\MarkdownService;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Support\Facades\Cache;
 use App\Support\DateTimeFormatter;
 
-#[ObservedBy(CommentObserver::class)]
 class Comment extends Model {
 
     use HasFactory;
-    
+
+    // ran on first model usage
+    protected static function booted() {
+        // runs on fist model usages; registers model event handlers
+        static::saved(static::forgetCache(...));
+        static::deleted(static::forgetCache(...));
+    }
+
+    // model event handler
+    public static function forgetCache(Comment $comment): void {
+        Cache::forget("comment:{$comment->id}:content_html"); // forget markdown cache
+    }
+
     protected $fillable = [
         "post_id", // gets validated in store, I wanted to use a policy, but there is no way to cleanly access $post
         "content"
