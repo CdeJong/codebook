@@ -17,7 +17,12 @@
         "esModuleInterop": true,
         "checkJs": true,
         "jsx": "preserve",
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["resources/js/*"]
+        }
     },
     "include": ["resources/js/**/*"]
 }
