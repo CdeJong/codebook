@@ -1,8 +1,15 @@
 <template>
-    <nav>
-        <router-link :to="{name: 'books.index'}">Boeken Overzicht</router-link> |
-        <router-link :to="{name: 'books.create'}">Nieuw Boek</router-link> |
-        <router-link :to="{name: 'authors.index'}">Authors</router-link>
-    </nav>
-    <router-view></router-view>
+    <header>
+        <nav class="container">
+            <ul>
+                <li><router-link :to="{name: 'books.index'}">Boeken</router-link></li>
+                <li><router-link :to="{name: 'authors.index'}">Auteurs</router-link></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <router-view />
+    </div>
+    
 </template>

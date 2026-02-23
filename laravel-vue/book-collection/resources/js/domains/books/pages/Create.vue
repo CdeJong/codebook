@@ -15,9 +15,6 @@ const book = ref<BookFormData>({
 });
 
 const handleSubmit = async (data : BookFormData) : Promise<void> => {
-
-    console.log(data);
-
     await createBook(data);
     router.push({name: 'books.index'});
 };
@@ -25,6 +22,11 @@ const handleSubmit = async (data : BookFormData) : Promise<void> => {
 
 
 <template>
-    <h1>Create New Book</h1>
+    <div class="content-header">
+        <div class="primary-header">
+            <h1 class="title">Voeg een nieuw boek toe</h1>
+        </div>
+    </div>
+
     <Form :book="book" @submit="handleSubmit" />
 </template>

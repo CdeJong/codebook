@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAuthorRequest;
+use App\Http\Requests\UpdateAuthorRequest;
 use App\Http\Resources\AuthorResource;
 use App\Models\Author;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class AuthorController extends Controller
@@ -16,50 +19,32 @@ class AuthorController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+    public function store(StoreAuthorRequest $request) {
+        Author::create($request->validated());
+        $authors = Author::all();
+        return AuthorResource::collection($authors);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(UpdateAuthorRequest $request, Author $author) {
+        $author->update($request->validated());
+        $authors = Author::all();
+        return AuthorResource::collection($authors);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
+    public function destroy(Author $author) {
+        try {
+            $author->delete();
+            return response()->json(['message' => 'Author was deleted successfully']);    
+        } catch (QueryException $exception) {
+            return response()->json(['message' => 'Author cannot be deleted because they still have books.'], 409);
+        }
     }
 }

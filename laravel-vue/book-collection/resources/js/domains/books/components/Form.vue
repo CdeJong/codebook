@@ -23,11 +23,11 @@ const handleSubmit = () => {
         <textarea id="description" v-model="form.description"></textarea>
         <label for="author">Auteur</label>
         <select id="author" v-model="form.author_id" required>
-            <option v-for="author in getAllAuthors" :key="author.id" :value="author.id">
+            <option v-for="author in getAllAuthors" :key="author.id" :value="author.id" :selected="form.author_id == author.id">
                 {{ author.first_name }}  {{ author.last_name }}
             </option>
         </select>
 
-        <button type="submit">Opslaan</button>
+        <button class="button" type="submit">Opslaan</button>
     </form>
 </template>
