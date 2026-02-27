@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import Form from '@/domains/authors/components/Form.vue';
 import { useRouter } from 'vue-router';
 import { AuthorFormData } from '@/domains/authors/author';
-import { createAuthor } from '@/domains/authors/store';
+import { authorStore } from '@/domains/authors/store';
 
 const router = useRouter();
 
@@ -13,7 +13,7 @@ const author = ref<AuthorFormData>({
 });
 
 const handleSubmit = async (data : AuthorFormData) : Promise<void> => {
-    await createAuthor(data);
+    await authorStore.actions.create(data);
     router.push({name: 'authors.index'});
 };
 

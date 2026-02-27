@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Form from '@/domains/books/components/Form.vue';
-import { createBook } from '@/domains/books/store';
+import { bookStore } from '@/domains/books/store';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import { BookFormData } from '@/domains/books/book';
@@ -11,11 +11,11 @@ const router = useRouter();
 const book = ref<BookFormData>({
     title: '',
     description: '',
-    author_id: null,
+    author_id: NaN // does not seem to cause any issues :partying_face:
 });
 
 const handleSubmit = async (data : BookFormData) : Promise<void> => {
-    await createBook(data);
+    await bookStore.actions.create(data);
     router.push({name: 'books.index'});
 };
 </script>

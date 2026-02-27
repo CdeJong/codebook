@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { fetchBooks, getAllBooks, deleteBook } from '@/domains/books/store';
+import { bookStore } from '@/domains/books/store';
 
-fetchBooks();
+bookStore.actions.fetchAll();
+const books = bookStore.getters.getAll();
 </script>
 
 
@@ -24,11 +25,11 @@ fetchBooks();
             </tr>
         </thead>
         <tbody>
-            <tr v-for="book in getAllBooks" :key="book.id">
-                <td>{{ book.title }}</td>
-                <td>{{ book.description }}</td>
+            <tr v-for="book in books" :key="book.id">
+                <td class="short">{{ book.title }}</td>
+                <td class="long">{{ book.description }}</td>
                 <td><router-link class="button" :to="{name: 'books.edit', params: { id: book.id } }">Edit</router-link></td>
-                <td><button class="button delete" @click="deleteBook(book.id)" >Delete</button></td>
+                <td><button class="button delete" @click="bookStore.actions.delete(book)" >Delete</button></td>
             </tr>
         </tbody>
         

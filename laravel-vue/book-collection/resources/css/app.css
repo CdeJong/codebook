@@ -148,6 +148,20 @@ header button:hover {
     text-align: right;
 }
 
+.table .short {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table .long {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .post-gallery {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -294,13 +308,21 @@ header button:hover {
 .error-list ul {
     list-style-type: none;
     padding: 0;
-    margin-bottom: 0.5em;
 }
 
 .error-list li {
+    margin-bottom: 0.25em;
+}
+
+.error-list li,
+.error {
     padding: 5px;
     background-color: rgb(255, 149, 149);
-    margin-bottom: 0.25em;
+}
+
+.error-list ul,
+.error {
+    margin-bottom: 0.5em;
 }
 
 .button {

@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { fetchAuthors, getAllAuthors, deleteAuthor } from '@/domains/authors/store';
+import { authorStore } from '@/domains/authors/store';
 import { RouterLink } from 'vue-router';
 
-fetchAuthors();
+authorStore.actions.fetchAll();
+
+// vue starts crying when I immidiately use this in the v-for :/
+const authors = authorStore.getters.getAll();
+
 </script>
 
 
@@ -25,11 +29,11 @@ fetchAuthors();
             </tr>
         </thead>
         <tbody>
-            <tr v-for="author in getAllAuthors" :key="author.id">
-                <td>{{ author.first_name }}</td>
-                <td>{{ author.last_name }}</td>
+            <tr v-for="author in authors" :key="author.id">
+                <td class="short">{{ author.first_name }}</td>
+                <td class="short">{{ author.last_name }}</td>
                 <td><router-link class="button" :to="{name: 'authors.edit', params: { id: author.id } }">Edit</router-link></td>
-                <td><button class="button delete" @click="deleteAuthor(author.id)" >Delete</button></td>
+                <td><button class="button delete" @click="authorStore.actions.delete(author)" >Delete</button></td>
             </tr>
         </tbody>
     </table>

@@ -4,7 +4,4 @@ export interface Author {
     last_name: string
 }
 
-export interface AuthorFormData {
-    first_name: string,
-    last_name: string
-}
+export interface AuthorFormData extends Omit<Author, 'id'> {}

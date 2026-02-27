@@ -21,9 +21,8 @@ class BookController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(StoreBookRequest $request) {
-        Book::create($request->validated());
-        $books = Book::all();
-        return BookResource::collection($books);
+        $book = Book::create($request->validated());
+        return new BookResource($book);
     }
 
     /**
@@ -31,8 +30,7 @@ class BookController extends Controller {
      */
     public function update(UpdateBookRequest $request, Book $book) {
         $book->update($request->validated());
-        $books = Book::all();
-        return BookResource::collection($books);
+        return new BookResource($book);
     }
 
     /**
