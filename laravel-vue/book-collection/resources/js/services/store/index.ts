@@ -1,32 +1,11 @@
-import { Ref, computed, ref } from "vue";
+import { computed, ref } from "vue";
 import { getRequest, postRequest, putRequest, deleteRequest } from "@/services/http";
+import { Identifiable, State, New, Updatable, StoreModule } from "@/services/store/types"
 
-
-type Identifiable = { 
-    id: number;
-};
-
-type State<T extends Identifiable> = Ref<Record<number, Readonly<T>>>;
-
-type New<T extends Identifiable> = Omit<T, 'id'>;
-
-type Updatable<T extends Identifiable> = New<T> & {
-    id?: number;
-};
-
-export const storeModuleFactory = <T extends Identifiable>(moduleName : string) => {
+export const storeModuleFactory = <T extends Identifiable>(moduleName : string) : StoreModule<T> => {
 
     const state : State<T> = ref({});
     const computedState = computed(() => Object.values(state.value));
-
-    const getAll = computed(() => 
-        Object.values(state.value)
-    );
-
-    const getById = (id: number) => computed(() => 
-        state.value[id]
-    );
-
 
     const getters = {
         getAll: () => computedState,
@@ -85,12 +64,14 @@ export const storeModuleFactory = <T extends Identifiable>(moduleName : string) 
         },
 
         delete: async (item : T) => {
-            await deleteRequest(moduleName + '/' + item.id);
-            setters.deleteById(item.id);
+            await deleteRequest(moduleName + '/' + item.id).then(
+                _ => setters.deleteById(item.id), // success
+                _ => { /* ignore the possible error, already handled elsewhere */ }
+            );
         }
 
      }
 
-    return { getters, setters, actions }
+    return { getters, setters, actions, state }
 
 }

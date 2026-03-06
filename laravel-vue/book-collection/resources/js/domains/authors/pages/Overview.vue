@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { authorStore } from '@/domains/authors/store';
+import ErrorPopUp from '@/services/error/ErrorPopUp.vue';
 import { RouterLink } from 'vue-router';
 
 authorStore.actions.fetchAll();
@@ -11,6 +12,8 @@ const authors = authorStore.getters.getAll();
 
 
 <template>
+    <ErrorPopUp />
+
     <div class="content-header">
         <div class="primary-header">
             <h1 class="title">Auteurs</h1>

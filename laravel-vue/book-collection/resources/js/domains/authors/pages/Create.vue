@@ -2,17 +2,18 @@
 import { ref } from 'vue';
 import Form from '@/domains/authors/components/Form.vue';
 import { useRouter } from 'vue-router';
-import { AuthorFormData } from '@/domains/authors/author';
+import { Author } from '@/domains/authors/author';
 import { authorStore } from '@/domains/authors/store';
 
 const router = useRouter();
 
-const author = ref<AuthorFormData>({
+const author = ref<Author>({
+    id: NaN,
     first_name: '',
     last_name: ''
 });
 
-const handleSubmit = async (data : AuthorFormData) : Promise<void> => {
+const handleSubmit = async (data : Author) : Promise<void> => {
     await authorStore.actions.create(data);
     router.push({name: 'authors.index'});
 };

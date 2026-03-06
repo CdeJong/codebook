@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import Form from '@/domains/books/components/Form.vue';
 import { bookStore } from '@/domains/books/store';
-import { BookFormData } from '@/domains/books/book';
+import { Book } from '@/domains/books/book';
 
 const route = useRoute();
 const router = useRouter();
@@ -13,7 +13,7 @@ const params = route.params.id;
 const bookId = parseInt(Array.isArray(params) ? params[0] : params);
 const book = bookStore.getters.getById(bookId);
 
-const handleSubmit = async (data : BookFormData) => {
+const handleSubmit = async (data : Book) => {
     await bookStore.actions.update(bookId, data);
     router.push({ name: 'books.index' });
 };

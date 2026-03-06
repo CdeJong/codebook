@@ -6,8 +6,7 @@ use App\Http\Requests\StoreAuthorRequest;
 use App\Http\Requests\UpdateAuthorRequest;
 use App\Http\Resources\AuthorResource;
 use App\Models\Author;
-use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AuthorController extends Controller
 {
@@ -38,11 +37,15 @@ class AuthorController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(Author $author) {
-        try {
-            $author->delete();
-            return response()->json(['message' => 'Author was deleted successfully']);    
-        } catch (QueryException $exception) {
-            return response()->json(['message' => 'Author cannot be deleted because they still have books.'], 409);
+
+        if ($author->books()->exists()) {
+            throw new HttpResponseException(response()->json([
+                'message' => 'Author cannot be deleted because they still have books.',
+                'errors' => []
+            ], 422));    
         }
+
+        $author->delete();
+        // return response()->json(['message' => 'Author was deleted successfully']);    
     }
 }

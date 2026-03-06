@@ -13,15 +13,19 @@ http.interceptors.request.use(
         destroyErrors();
         destroyMessage();
         return config;
-    }
+    },
+    error => Promise.reject(error)
 );
 
 http.interceptors.response.use(
     response => response,
     error => {
         if (error.response && error.response.status === 422) {
-            setErrorBag(error.response.data.errors);
-            setMessage(error.response.data.message);
+            // default values, had some weird exceptions because one of my laravel endpoints didn't provide an empty error list
+            const { errors = {}, message = "Something went wrong, but no error message was provided!" } = error.response.data;
+
+            setErrorBag(errors);
+            setMessage(message);
         }
         return Promise.reject(error);
     }

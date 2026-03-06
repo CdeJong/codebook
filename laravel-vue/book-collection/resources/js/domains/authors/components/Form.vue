@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { AuthorFormData } from '@/domains/authors/author';
+import { Author } from '@/domains/authors/author';
 import FormMessage from '@/services/error/FormMessage.vue';
 import FormError from '@/services/error/FormError.vue';
 
 
 const props = defineProps(['author']);
 const emit = defineEmits(['submit']);
-const form = ref<AuthorFormData>({ ...props.author });
+const form = ref<Author>({ ...props.author });
 
-const handleSubmit = () => {
-    emit('submit', form.value);
-}
+const handleSubmit = () => emit('submit', form.value);
+
 </script>
 
 <template>
