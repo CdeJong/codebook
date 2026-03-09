@@ -1,24 +1,28 @@
 import { storeModuleFactory } from "@/services/store";
 import { Review } from "@/domains/reviews/review";
-import { StoreModule } from "@/services/store/types";
-import { computed, ComputedRef } from "vue";
+import { computed } from "vue";
+import { getRequest } from "@/services/http";
 
-type ReviewStoreModule = StoreModule<Review> & {
-    getters: {
-        getByBookId: (bookId: number) => ComputedRef<Readonly<Review>[]>
-    } & StoreModule<Review>['getters'] // keep original getters too
+const baseStore = storeModuleFactory<Review>("reviews");
+
+export const reviewStore = {
+    getters: {...baseStore.getters,
+
+        getByBookId: (bookId : number) => {
+            return computed(() => Object.values(baseStore.state.value).filter(review => review.book_id === bookId));
+        }
+
+    },
+    setters: {...baseStore.setters},
+    actions: {...baseStore.actions,
+
+        fetchByBookId: async (bookId : number) => {
+            const {data} = await getRequest("books" + '/' + bookId + '/reviews');
+            if (!data) {
+                return;
+            }
+            reviewStore.setters.setAll(data);
+        }
+
+    },
 }
-
-export const reviewStore = storeModuleFactory<Review>("reviews") as ReviewStoreModule;
-
-// reviewStore.actions.fetchByBookId = async (bookId : number) => {
-//     const {data} = await getRequest("books" + '/' + bookId + '/reviews');
-//     if (!data) {
-//         return;
-//     }
-//     reviewStore.setters.setAll(data);
-// }
-
-reviewStore.getters.getByBookId = (bookId : number) => {
-    return computed(() => Object.values(reviewStore.state.value).filter(review => review.book_id === bookId));
-};

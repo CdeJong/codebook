@@ -1,8 +1,8 @@
 import { computed, ref } from "vue";
 import { getRequest, postRequest, putRequest, deleteRequest } from "@/services/http";
-import { Identifiable, State, New, Updatable, StoreModule } from "@/services/store/types"
+import { Identifiable, State, New, Updatable } from "@/services/store/types"
 
-export const storeModuleFactory = <T extends Identifiable>(moduleName : string) : StoreModule<T> => {
+export const storeModuleFactory = <T extends Identifiable>(moduleName : string) => {
 
     const state : State<T> = ref({});
     const computedState = computed(() => Object.values(state.value));

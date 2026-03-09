@@ -9,8 +9,9 @@ const router = useRouter();
 
 bookStore.actions.fetchAll();
 
-const params = route.params.id;
-const bookId = parseInt(Array.isArray(params) ? params[0] : params);
+const bookId = +route.params.id
+// const params = route.params.id;
+// const bookId = parseInt(Array.isArray(params) ? params[0] : params);
 const book = bookStore.getters.getById(bookId);
 
 const handleSubmit = async (data : Book) => {

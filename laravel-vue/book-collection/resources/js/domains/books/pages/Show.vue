@@ -12,8 +12,9 @@ const route = useRoute();
 bookStore.actions.fetchAll();
 reviewStore.actions.fetchAll();
 
-const params = route.params.id;
-const bookId = parseInt(Array.isArray(params) ? params[0] : params);
+const bookId = +route.params.id
+// const params = route.params.id;
+// const bookId = parseInt(Array.isArray(params) ? params[0] : params);
 const book = bookStore.getters.getById(bookId);
 
 const reviews = reviewStore.getters.getByBookId(bookId);
@@ -33,18 +34,18 @@ const handleCreate = async (review: Review) => {
 </script>
 
 
-<template>
+<template v-if="book">
     <div class="content-header">
         <div class="primary-header">
-            <h1 class="title">Book: {{ book?.title ?? "loading..." }}</h1>
+            <h1 class="title">Book: {{ book.title ?? "loading..." }}</h1>
         </div>
         <div class="secondary-header">
-            <p class="title">Written by {{ book?.author?.first_name ?? "loading..." }} {{ book?.author?.last_name }}</p> 
+            <p class="title">Written by {{ book.author?.first_name ?? "loading..." }} {{ book.author?.last_name }}</p> 
         </div>
     </div>
 
     <div class="page-content">
-        <p>{{ book?.description }}</p>
+        <p>{{ book.description }}</p>
     </div>
 
     <div class="content-header">
@@ -56,7 +57,6 @@ const handleCreate = async (review: Review) => {
     <Form :review="review" @submit="handleCreate" />
 
     <ReviewList v-model="reviews" />
-
 </template>
 
 <style scoped>

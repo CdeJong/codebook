@@ -9,8 +9,9 @@ const router = useRouter();
 
 authorStore.actions.fetchAll();
 
-const params = route.params.id;
-const authorId = parseInt(Array.isArray(params) ? params[0] : params);
+const authorId = +route.params.id
+// const params = route.params.id;
+// const authorId = parseInt(Array.isArray(params) ? params[0] : params);
 const author = authorStore.getters.getById(authorId);
 
 const handleSubmit = async (data : Author) => {
