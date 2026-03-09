@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { bookStore } from '@/domains/books/store';
 import { reviewStore } from '@/domains/reviews/store';
 import Form from '@/domains/reviews/components/Form.vue';
 import { Review } from '@/domains/reviews/review';
-import ReviewComponent from '@/domains/reviews/components/ReviewComponent.vue';
 import ReviewList from '@/domains/reviews/components/ReviewList.vue';
 
 const route = useRoute();
-const router = useRouter();
 
 bookStore.actions.fetchAll();
 reviewStore.actions.fetchAll();

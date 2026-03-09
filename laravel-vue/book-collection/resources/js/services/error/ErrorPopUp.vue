@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
 import { destroyMessage, getMessage } from '@/services/error';
 
 const message = getMessage;
@@ -7,18 +6,6 @@ const message = getMessage;
 const close = () => {
     destroyMessage();
 };
-
-// const closeButton = ref<HTMLButtonElement | null>(null);
-
-// watch(message, async (value) => {
-//   if (value) {
-//     await nextTick();
-//     closeButton.value?.focus();
-//   } else {
-//     closeButton.value?.blur();
-//   }
-// });
-
 </script>
 
 <template>
