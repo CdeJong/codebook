@@ -33,7 +33,7 @@ class Ticket extends Model {
         return $this->hasMany(Comment::class);
     }
 
-    public function tickets() : HasMany {
-        return $this->hasMany(Ticket::class);
+    public function notes() : HasMany {
+        return $this->hasMany(Note::class);
     }
 }

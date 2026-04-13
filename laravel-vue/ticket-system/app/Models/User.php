@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,7 +19,8 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
     ];
@@ -43,6 +43,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'is_admin' => 'boolean',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
@@ -50,6 +51,14 @@ class User extends Authenticatable
 
     public function tickets() : HasMany {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function notes() : HasMany {
+        return $this->hasMany(Note::class);
+    }
+
+    public function comments() : HasMany {
+        return $this->hasMany(Comment::class);
     }
 
 }

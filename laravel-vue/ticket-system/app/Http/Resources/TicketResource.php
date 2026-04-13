@@ -14,9 +14,19 @@ class TicketResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user->id,
+            'assigned_user_id' => $this->assignedUser?->id, // could be null
+            'category_ids' => $this->categories->pluck('id'),
+            'title' => $this->title,
+            'status' => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
 
-        // TODO use whenLoaded, so it doesnt make any extra queries, 
-        // the controller itself can choose what they want to return with the with([]) method
+            'content' => $this->content,
+            'notes' => NoteResource::collection($this->whenLoaded('notes')), 
+            'comments' => CommentResource::collection($this->whenLoaded('comments')) 
+        ];
     }
 }

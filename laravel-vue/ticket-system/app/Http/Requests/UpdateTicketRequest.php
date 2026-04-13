@@ -14,7 +14,10 @@ class UpdateTicketRequest extends BaseFormRequest {
     public function rules(): array{
 
         return [
-            'content' => 'required|string|max:2000'
+            'title' => 'required|string|max:250',
+            'content' => 'required|string|max:2000',
+            'category_ids' => 'required|array',
+            'category_ids.*' => 'integer|exists:categories,id'
         ];
     }
 }
