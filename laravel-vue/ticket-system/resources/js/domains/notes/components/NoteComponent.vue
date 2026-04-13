@@ -7,14 +7,10 @@ import { userStore } from '@/domains/users/store';
 
 const note = defineModel<Note>({ required: true });
 
-const emit = defineEmits(['deleteNote', 'updateNote'])
+const emit = defineEmits(['deleteNote', 'updateNote']);
 
 const isEditing = ref<boolean>(false);
-const formNote = ref<Note>({ ...note.value }); 
-    
-watch(note, (val) => {
-    console.log('note update', val);
-})    
+const formNote = ref<Note>({ ...note.value });   
 
 const handleEdit = () => {
     isEditing.value = true;
