@@ -2,10 +2,16 @@
 import { Comment } from '@/domains/comments/comment';
 import { format } from '@/utils/datetime';
 import { userStore } from '@/domains/users/store';
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
+import { showConfirm } from '@/services/dialog';
 
 
 const comment = defineModel<Comment>({ required: true });
+
+const emit = defineEmits(['deleteComment', 'updateComment']);
+
+const isEditing = ref<boolean>(false);
+const formComment = ref<Comment>({ ...comment.value }); 
 
 const user = userStore.getters.getById(comment.value.user_id);
 const username = computed(() => {
@@ -19,10 +25,30 @@ const isEdited = computed(() => {
     return comment.value.created_at !== comment.value.updated_at;
 });
 
-const handleUpdate = () => {
-    
+const handleEdit = () => {
+    console.log('edit');
 }
 
+const handleDelete = () => {
+    showConfirm(
+        "Delete comment", 
+        "Are you sure you want to delete this comment?",
+        null,
+        handleConfirmedDelete
+    );
+}
+
+const handleConfirmedDelete = () => {
+    console.log('delete');
+}
+
+const handleUpdate = () => {
+    console.log('update');
+}
+
+const handleCancel = () => {
+    console.log('cancel');
+}
 </script>
 
 <template>
@@ -30,14 +56,14 @@ const handleUpdate = () => {
     <div class="comment-header">
         <div class="profile-picture"></div>
         <h3 class="title">{{ username }}</h3>
-        <button class="primary">
+        <button class="primary" type="submit">
             <i class="fa-solid fa-floppy-disk primary"></i>
         </button>
-        <button class="danger">
+        <button class="danger" @click.prevent="handleCancel">
             <i class="fa-solid fa-xmark danger"></i>
         </button>
     </div>
-    <textarea class="comment-content">{{ comment.content }}</textarea>
+    <textarea class="comment-content" v-model="formComment.content"></textarea>
     <div v-if="isEdited" 
         class="comment-footer" 
         :title="'Last edited ' + format(comment.updated_at)"
@@ -49,10 +75,10 @@ const handleUpdate = () => {
     <div class="comment-header">
         <div class="profile-picture"></div>
         <h3 class="title">{{ username }}</h3>
-        <button class="primary hide">
+        <button class="primary hide" @click.prevent="handleEdit">
             <i class="fa-solid fa-pen primary"></i>
         </button>
-        <button class="danger hide">
+        <button class="danger hide" @click.prevent="handleDelete">
             <i class="fa-solid fa-trash danger"></i>
         </button>
     </div>
