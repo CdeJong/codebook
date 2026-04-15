@@ -21,8 +21,8 @@ const user = getLoggedInUser;
         <nav class="container">
             <ul>
                 <li v-if="user"><router-link :to="{ name: 'tickets.index' }">Tickets</router-link></li>
-                <li v-if="isAdmin"><router-link :to="{ name: 'categories.index' }">Categories</router-link></li>
-                <li v-if="isAdmin"><router-link :to="{ name: 'users.index' }">Users</router-link></li>
+                <li v-if="isAdmin()"><router-link :to="{ name: 'categories.index' }">Categories</router-link></li>
+                <li v-if="isAdmin()"><router-link :to="{ name: 'users.index' }">Users</router-link></li>
             </ul>
 
             <ul>

@@ -16,6 +16,10 @@ class Ticket extends Model {
         "title",
         "content"
     ];
+
+    public function getIsCompletedAttribute() : bool {
+        return $this->status === 'COMPLETED';
+    }
     
     public function user() : BelongsTo {
         return $this->belongsTo(User::class);

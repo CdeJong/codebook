@@ -3,7 +3,8 @@ import { Comment } from '@/domains/comments/comment';
 import { format } from '@/utils/datetime';
 import { userStore } from '@/domains/users/store';
 import { ref, computed } from 'vue';
-import { showConfirm } from '@/services/dialog';
+import { showConfirm, showNotice } from '@/services/dialog';
+import { isAdminOrHasId } from '@/services/auth';
 
 
 const comment = defineModel<Comment>({ required: true });
@@ -26,7 +27,7 @@ const isEdited = computed(() => {
 });
 
 const handleEdit = () => {
-    console.log('edit');
+    isEditing.value = true;
 }
 
 const handleDelete = () => {
@@ -39,31 +40,43 @@ const handleDelete = () => {
 }
 
 const handleConfirmedDelete = () => {
-    console.log('delete');
+    emit('deleteComment', comment.value.id);
 }
 
-const handleUpdate = () => {
-    console.log('update');
+const handleSave = () => {
+    if (comment.value.content != formComment.value.content) {
+        emit('updateComment', formComment.value);
+    }
+    isEditing.value = false;
 }
 
 const handleCancel = () => {
-    console.log('cancel');
+    isEditing.value = false;
+}
+
+const handleReport = () => {
+    showNotice(
+        'Comment Report',
+        'Thank you for the report! We will look into it as fast as possible!',
+        null, // ye we don't do anything with your report lol!
+        'Ok'
+    );
 }
 </script>
 
 <template>
-<form class="comment" @submit.prevent="handleUpdate">
+<form v-if="isEditing" class="comment" @submit.prevent="handleSave">
     <div class="comment-header">
         <div class="profile-picture"></div>
         <h3 class="title">{{ username }}</h3>
-        <button class="primary" type="submit">
+        <button type="submit">
             <i class="fa-solid fa-floppy-disk primary"></i>
         </button>
-        <button class="danger" @click.prevent="handleCancel">
+        <button @click.prevent="handleCancel">
             <i class="fa-solid fa-xmark danger"></i>
         </button>
     </div>
-    <textarea class="comment-content" v-model="formComment.content"></textarea>
+    <textarea class="comment-content" v-model="formComment.content" v-auto-resize></textarea>
     <div v-if="isEdited" 
         class="comment-footer" 
         :title="'Last edited ' + format(comment.updated_at)"
@@ -71,16 +84,25 @@ const handleCancel = () => {
     <div v-else class="comment-footer">{{ format(comment.created_at) }}</div>
 </form>
 
-<div class="comment">
+<div v-else class="comment">
     <div class="comment-header">
         <div class="profile-picture"></div>
         <h3 class="title">{{ username }}</h3>
-        <button class="primary hide" @click.prevent="handleEdit">
-            <i class="fa-solid fa-pen primary"></i>
-        </button>
-        <button class="danger hide" @click.prevent="handleDelete">
-            <i class="fa-solid fa-trash danger"></i>
-        </button>
+
+        <template v-if="isAdminOrHasId(comment.user_id)">
+            <button class="hide" @click.prevent="handleEdit">
+                <i class="fa-solid fa-pen primary"></i>
+            </button>
+            <button class="hide" @click.prevent="handleDelete">
+                <i class="fa-solid fa-trash danger"></i>
+            </button>
+        </template>
+        <template v-else>
+            <button class="hide" @click.prevent="handleReport">
+                <i class="fa-solid fa-bullhorn danger"></i>
+            </button>
+        </template>
+    
     </div>
     <div class="comment-content">{{ comment.content }}</div>
     <div v-if="isEdited" 
@@ -99,7 +121,6 @@ const handleCancel = () => {
 
 .comment:hover {
     background-color: rgb(229, 255, 255);
-    
 }
 
 .comment .comment-header {
@@ -149,6 +170,7 @@ button.hide {
     border: none;
     background-color: #e7e7e7;
     padding: 0;
+    resize: vertical;
 }
 
 .comment .comment-footer {

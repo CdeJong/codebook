@@ -23,9 +23,19 @@ export const getLoggedInUser = computed(() => {
     return loggedInUser.value;
 });
 
-export const isAdmin = computed(() => {
+export const isAdminOrHasId = (userId : number) => {
+    const user = loggedInUser.value;
+
+    if (user == null) {
+        return false;
+    }
+
+    return user.is_admin || user.id === userId;
+};
+
+export const isAdmin = () => {
     return loggedInUser.value?.is_admin === true;
-});
+};
 
 
 export const login = async (input : LoginInput) => {

@@ -25,12 +25,14 @@ const handleDelete = () => {
     );
 }
 
-const handleConfirmedDelete = async () => {
+const handleConfirmedDelete = () => {
     emit('deleteNote', note.value.id);
 }
 
 const handleSave = () => {
-    emit('updateNote', formNote.value);
+    if (note.value.content != formNote.value.content) {
+        emit('updateNote', formNote.value);
+    }
     isEditing.value = false;
 }
 
@@ -65,7 +67,7 @@ const isEdited = computed(() => {
             <i class="fa-solid fa-xmark danger"></i>
         </button>
     </div>
-    <textarea class="note-content" v-model="formNote.content"></textarea>
+    <textarea class="note-content" v-model="formNote.content" v-auto-resize></textarea>
     <div v-if="isEdited" 
         class="note-footer" 
         :title="'Last edited ' + format(note.updated_at)"
@@ -149,6 +151,7 @@ button.hide {
     min-height: 50px;
     border-bottom: 1px solid black;
     margin-right: 5px;
+    resize: vertical;
 }
 
 .note .note-footer {

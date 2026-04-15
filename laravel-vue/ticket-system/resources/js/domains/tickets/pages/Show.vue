@@ -130,7 +130,7 @@ const handleCommentDelete = async (commentId : number) => {
                     
                 </dl>
 
-                <NoteSection v-if="isAdmin" v-model="ticket" />
+                <NoteSection v-if="isAdmin()" v-model="ticket" />
             </div>
         </div>     
     </template>
