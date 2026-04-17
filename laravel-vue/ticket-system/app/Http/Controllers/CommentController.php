@@ -21,15 +21,14 @@ class CommentController extends Controller {
         $user = Auth::user();
 
         $comment = $user->comments()->make($request->validated());
-        $ticket = $comment->ticket;
-
+        //$ticket = $comment->ticket;
         // only admins are allowed to comment on a closed ticket
-        if ($ticket->is_completed && !$user->is_admin) {
-            throw new HttpResponseException(response()->json([
-                'message' => 'Unauthorized',
-                'errors' => []
-            ], 401));
-        }
+        // if ($ticket->is_completed && !$user->is_admin) {
+        //     throw new HttpResponseException(response()->json([
+        //         'message' => 'Unauthorized',
+        //         'errors' => []
+        //     ], 401));
+        // }
 
         $this->requiresResourceOwner($comment->ticket->user->id);
         $comment->save();

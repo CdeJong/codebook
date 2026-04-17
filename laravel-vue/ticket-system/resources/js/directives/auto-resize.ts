@@ -15,7 +15,6 @@ export default {
         }
 
         const resize = () => {
-            console.log('resize!');
             // causes some glitchy behavior
             // element.style.height = 'auto';
             element.style.height = element.scrollHeight + 'px';    

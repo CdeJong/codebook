@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Resources\ProfileResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Models\User;
 
@@ -19,7 +19,7 @@ class AuthenticationController extends Controller {
         if (Auth::guard('web')->attempt($validated)) {
             $request->session()->regenerate();
 
-            return new ProfileResource($request->user());
+            return new UserResource($request->user());
         }
 
         throw new HttpResponseException(response()->json([
@@ -29,7 +29,7 @@ class AuthenticationController extends Controller {
     }
 
     public function me(Request $request) {
-        return new ProfileResource($request->user());
+        return new UserResource($request->user());
     }
 
     public function logout(Request $request) {

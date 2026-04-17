@@ -33,7 +33,7 @@ const handleSubmit = () => {
         <select name="categories" id="" v-model="form.category_ids" multiple>
             <option v-for="category in categories" :value="category.id" :key="category.id">{{ category.name }}</option>
         </select>
-        <FormError name="categories" />
+        <FormError name="category_ids" />
 
         <button class="button" type="submit">Save</button>
     </form>

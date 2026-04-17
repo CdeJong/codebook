@@ -24,8 +24,10 @@ const ticket = ref<Ticket>({
 });
 
 const handleSubmit = async (data : Ticket) : Promise<void> => {
-    await ticketStore.actions.create(data);
-    router.push({name: 'tickets.index'});
+    const createdTicket = await ticketStore.actions.create(data);
+    if (createdTicket !== undefined) {
+        router.push({name: 'tickets.show', params: { id: createdTicket.id } });
+    }
 };
 
 </script>

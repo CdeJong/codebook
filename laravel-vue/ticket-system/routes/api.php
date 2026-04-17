@@ -9,30 +9,35 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/tickets', [TicketController::class, 'index'])->name("tickets.index");
-    Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name("tickets.show");
-    Route::post('/tickets', [TicketController::class, 'store'])->name("tickets.store");
+    Route::get('/tickets', [TicketController::class, 'index']);
+    Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
+    Route::post('/tickets', [TicketController::class, 'store']);
+    Route::patch('/tickets/{ticket}/assignee', [TicketController::class, 'patchAssignee']);
+    Route::patch('/tickets/{ticket}/status', [TicketController::class, 'patchStatus']);
+    Route::patch('/tickets/{ticket}/categories', [TicketController::class, 'patchCategories']);
 
-    Route::get('/categories', [CategoryController::class, 'index'])->name("categories.index");
-    Route::post('/categories', [CategoryController::class, 'store'])->name("categories.store");
-    Route::put('/categories/{category}', [CategoryController::class, 'update'])->name("categories.update");
-    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name("categories.destory");
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::post('/categories', [CategoryController::class, 'store']);
+    Route::put('/categories/{category}', [CategoryController::class, 'update']);
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
     
-    Route::post('/notes', [NoteController::class, 'store'])->name("notes.store");
-    Route::put('/notes/{note}', [NoteController::class, 'update'])->name("notes.update");
-    Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name("notes.destroy");
+    Route::post('/notes', [NoteController::class, 'store']);
+    Route::put('/notes/{note}', [NoteController::class, 'update']);
+    Route::delete('/notes/{note}', [NoteController::class, 'destroy']);
 
-    Route::post('/comments', [CommentController::class, 'store'])->name("comments.store");
-    Route::put('/comments/{comment}', [CommentController::class, 'update'])->name("comments.update");
-    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name("comments.destroy");
+    Route::post('/comments', [CommentController::class, 'store']);
+    Route::put('/comments/{comment}', [CommentController::class, 'update']);
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
     
-    Route::get('/users', [UserController::class, 'index'])->name("users.index");
-    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name("users.destory");
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
-    Route::get('/me', [AuthenticationController::class, 'me'])->name('auth.me');
-    Route::post('/logout', [AuthenticationController::class, 'logout'])->name('auth.logout');
+    Route::get('/me', [AuthenticationController::class, 'me']);
+    Route::post('/logout', [AuthenticationController::class, 'logout']);
 });
 
-Route::post('/login', [AuthenticationController::class, 'login'])->name("auth.login");
-Route::post('/register', [AuthenticationController::class, 'register'])->name("auth.register");
+Route::post('/login', [AuthenticationController::class, 'login']);
+Route::post('/register', [AuthenticationController::class, 'register']);
 

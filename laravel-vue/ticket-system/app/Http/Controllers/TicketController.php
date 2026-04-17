@@ -76,6 +76,27 @@ class TicketController extends Controller {
         return new TicketResource($ticket);
     }
 
+    public function patchAssignee(Ticket $ticket) : JsonResource {
+
+        // todo add the patch
+
+        return new TicketResource($ticket);
+    }
+
+    public function patchStatus(Ticket $ticket) : JsonResource {
+
+        // todo add the patch
+
+        return new TicketResource($ticket);
+    }
+
+    public function patchCategories(Ticket $ticket) : JsonResource {
+
+        // todo add the patch
+
+        return new TicketResource($ticket);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
