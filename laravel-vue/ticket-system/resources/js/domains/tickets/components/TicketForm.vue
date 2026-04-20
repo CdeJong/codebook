@@ -4,13 +4,14 @@ import { Ticket } from '@/domains/tickets/ticket';
 import { ref } from 'vue';
 import FormError from '@/services/error/FormError.vue';
 import FormMessage from '@/services/error/FormMessage.vue';
+import CategorySelect from '@/domains/categories/components/CategorySelect.vue';
 
 const props = defineProps(['ticket']);
 const emit = defineEmits(['submit']);
 const form = ref<Ticket>({ ...props.ticket });
 
 categoryStore.actions.fetchAll();
-const categories = categoryStore.getters.getAll();    
+// const categories = categoryStore.getters.getAll();    
 
 const handleSubmit = () => {
     emit('submit', form.value);
@@ -30,9 +31,10 @@ const handleSubmit = () => {
         <FormError name="content" />
 
         <label for="categories">Categories:</label>
-        <select name="categories" id="" v-model="form.category_ids" multiple>
+        <!-- <select name="categories" id="" v-model="form.category_ids" multiple>
             <option v-for="category in categories" :value="category.id" :key="category.id">{{ category.name }}</option>
-        </select>
+        </select> -->
+        <CategorySelect v-model="form.category_ids"/>
         <FormError name="category_ids" />
 
         <button class="button" type="submit">Save</button>

@@ -4,9 +4,6 @@ import TicketTable from '@/domains/tickets/components/TicketTable.vue';
 import { ticketStore } from '@/domains/tickets/store';
 import { userStore } from '@/domains/users/store';
 import { showConfirm, showNotice } from '@/services/dialog';
-import ConfirmDialog from '@/services/dialog/ConfirmDialog.vue';
-import { ConfirmDialogData } from '@/services/dialog/types';
-import { computed, markRaw } from 'vue';
 
 ticketStore.actions.fetchAll();
 
@@ -38,8 +35,6 @@ const handleNotice = () => {
 </script>
 
 <template>
-    <!-- <ConfirmDialog v-model="data" /> -->
-
     <div class="content-header">
         <div class="primary-header">
             <h1 class="title">Ticket Overview</h1>

@@ -86,7 +86,7 @@ const sortedNotes = computed(() => {
 
 <style scoped>
 textarea {
-    min-height: 10px;
+    min-height: 20px;
     height: auto;
     transition: ease-in-out 0.5s min-height;
 }
@@ -97,6 +97,17 @@ textarea:focus {
 
 textarea.has-value {
     min-height: 100px;
+}
+
+textarea,
+.form {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form,
+.notes {
+    padding: 0.5em;
 }
 
 .notes {

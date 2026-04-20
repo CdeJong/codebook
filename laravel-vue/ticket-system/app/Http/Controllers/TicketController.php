@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PatchTicketAssigneeRequest;
+use App\Http\Requests\PatchTicketCategoriesRequest;
+use App\Http\Requests\PatchTicketStatusRequest;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +39,7 @@ class TicketController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(Ticket $ticket) { // todo return type
+    public function show(Ticket $ticket) : JsonResource {
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
@@ -46,15 +50,9 @@ class TicketController extends Controller {
             ], 401));
         }
 
-        $relations = ['user', 'assignedUser', 'categories', 'comments'];
+        $ticket->load(self::getRelations($user));
 
-        if ($user->is_admin) {
-            $relations[] = 'notes';
-        }
-
-        $expandedTicket = $ticket->load($relations);
-
-        return new TicketResource($expandedTicket);
+        return new TicketResource($ticket);
     }
 
     /**
@@ -65,6 +63,7 @@ class TicketController extends Controller {
         $user = Auth::user();
         $ticket = $user->tickets()->create($request->validated());
         $ticket->categories()->sync($request->validated('category_ids'));
+        $ticket->load(self::getRelations($user));
         return new TicketResource($ticket);
     }
 
@@ -72,28 +71,46 @@ class TicketController extends Controller {
      * Update the specified resource in storage.
      */
     public function update(UpdateTicketRequest $request, Ticket $ticket) : JsonResource {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         $ticket->update($request->validated());
+        $ticket->load(self::getRelations($user));
         return new TicketResource($ticket);
     }
 
-    public function patchAssignee(Ticket $ticket) : JsonResource {
-
-        // todo add the patch
-
+    public function patchAssignee(PatchTicketAssigneeRequest $request, Ticket $ticket) : JsonResource {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $this->requiresAdmin();
+        $assigned_user = User::findOrFail($request->validated('assigned_user_id'));
+        if (!$assigned_user->is_admin) {
+            throw new HttpResponseException(response()->json([
+                'message' => 'Only admins can be assigned to tickets!',
+                'errors' => []
+            ], 401));
+        }
+        $ticket->assignedUser()->associate($assigned_user);
+        $ticket->save();
+        $ticket->load(self::getRelations($user));
         return new TicketResource($ticket);
     }
 
-    public function patchStatus(Ticket $ticket) : JsonResource {
-
-        // todo add the patch
-
+    public function patchStatus(PatchTicketStatusRequest $request, Ticket $ticket) : JsonResource {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $this->requiresAdmin();
+        $ticket->status = $request->validated('status');
+        $ticket->save();
+        $ticket->load(self::getRelations($user));
         return new TicketResource($ticket);
     }
 
-    public function patchCategories(Ticket $ticket) : JsonResource {
-
-        // todo add the patch
-
+    public function patchCategories(PatchTicketCategoriesRequest $request, Ticket $ticket) : JsonResource {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $this->requiresResourceOwner($ticket->user->id);
+        $ticket->categories()->sync($request->validated('category_ids'));
+        $ticket->load(self::getRelations($user));
         return new TicketResource($ticket);
     }
 
@@ -103,5 +120,15 @@ class TicketController extends Controller {
     public function destroy(Ticket $ticket) : JsonResponse {
         $ticket->delete();
         return response()->json(['message' => 'resource was deleted successfully']);
+    }
+
+    private static function getRelations(User $user) : array {
+        $relations = ['user', 'assignedUser', 'categories', 'comments'];
+
+        if ($user->is_admin) {
+            $relations[] = 'notes';
+        }
+
+        return $relations;
     }
 }
