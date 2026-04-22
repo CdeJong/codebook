@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { categoryStore } from '@/domains/categories/store';
+import { Category } from '@/domains/categories/category';
 
-const categories = categoryStore.getters.getAll();
+const props = defineProps<{ categories: Category[] }>();
+
+const categories = props.categories;
 const category_ids = defineModel<number[]>();
 </script>
 
 <template>
+<div class="category-select">
     <label v-for="category in categories" :key="category.id" :for="'category-' + category.id">
         <input type="checkbox" :id="'category-' + category.id" v-model="category_ids" :value="Number(category.id)" />
         <div class="value">{{ category.name }}</div>
     </label>
+</div>
 </template>
 
 <style scoped>

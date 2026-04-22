@@ -18,8 +18,11 @@ const form = ref<Note>({
 });
 
 const handleCreate = async () => {
+    const copyForm = {...form.value};
+    form.value.content = '';
+
     // created note has database created id, created_at and updated_at values
-    const createdNote = await noteStore.actions.create(form.value);
+    const createdNote = await noteStore.actions.create(copyForm);
 
     if (!createdNote) {
         return;
@@ -29,8 +32,6 @@ const handleCreate = async () => {
     const copy = { ...ticket.value }
     copy.notes.push(createdNote);
     ticketStore.setters.set(copy);
-
-    form.value.content = '';
 }
 
 const handleUpdate = async (note : Note) => {
@@ -72,7 +73,7 @@ const sortedNotes = computed(() => {
 <template>
 <div>
     <form class="form" @submit.prevent="handleCreate">
-        <textarea v-model="form.content" :class="{ 'has-value': form.content.trim().length > 0 }" placeholder="Add a new note (Admins only)"></textarea>
+        <textarea v-model="form.content" :class="{ 'has-value': form.content.trim().length > 0 }" placeholder="Add a new note (Admins only)" required></textarea>
         <button class="button">Post Note</button>
     </form>
     

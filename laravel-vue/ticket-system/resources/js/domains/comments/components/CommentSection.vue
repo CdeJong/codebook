@@ -21,7 +21,9 @@ const form = ref<Comment>({
 });
 
 const handleCreate = async () => {
-    const createdComment = await commentStore.actions.create(form.value);
+    const copyForm = { ...form.value }
+    form.value.content = '';
+    const createdComment = await commentStore.actions.create(copyForm);
 
     if (!createdComment) {
         return;
@@ -72,7 +74,7 @@ const sortedComments = computed(() => {
 <template>
 <div>
     <form class="form" @submit.prevent="handleCreate">
-        <textarea v-model="form.content" :class="{ 'has-value': form.content.trim().length > 0 }" placeholder="Post a new comment..."></textarea>
+        <textarea v-model="form.content" :class="{ 'has-value': form.content.trim().length > 0 }" placeholder="Post a new comment..." required></textarea>
         <button class="button">Post Comment</button>
     </form>
 

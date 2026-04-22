@@ -2,15 +2,16 @@
 
 import { ticketStore } from '@/domains/tickets/store';
 import { userStore } from '@/domains/users/store';
+import { categoryStore } from '@/domains/categories/store';
 import { useRoute } from 'vue-router';
 import { format } from '@/utils/datetime';
-import { computed, ref, watch } from 'vue';
-import { categoryStore } from '@/domains/categories/store';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import NoteSection from '@/domains/notes/components/NoteSection.vue';
-import { commentStore } from '@/domains/comments/store';
-import { getLoggedInUser, isAdmin } from '@/services/auth';
+import { isAdmin } from '@/services/auth';
 import CommentSection from '@/domains/comments/components/CommentSection.vue';
 import CategorySelect from '@/domains/categories/components/CategorySelect.vue';
+import { arraysEqual } from '@/utils/array';
+import UserSelect from '@/domains/users/components/UserSelect.vue';
 
 const route = useRoute();
 const id = +route.params.id;
@@ -23,6 +24,23 @@ if (!isNaN(id)) {
 }
 
 const ticket = ticketStore.getters.getById(id);
+
+// form like values, can be updated!
+const assigned_user_id = ref<number | null>(null);
+const status = ref<string>('');
+const category_ids = ref<number[]>([]);
+watch(
+    () => ticket.value,
+    (ticket) => {
+        if (!ticket) {
+            return;
+        }
+        status.value = ticket.status;
+        category_ids.value = [...ticket.category_ids];
+        assigned_user_id.value = ticket.assigned_user_id;
+    },
+    { immediate: true }
+);
 
 const time = computed(() => {
     if (ticket.value == null) {
@@ -49,7 +67,7 @@ const user_name = computed(() => {
     const user = userStore.getters.getById(ticket.value.user_id);
 
     if (user.value == null) {
-        return "Unknown";
+        return 'loading...';
     }
 
     return user.value.first_name + ' ' + user.value.last_name;
@@ -60,7 +78,7 @@ const assigned_name = computed(() => {
         return '';
     }
 
-    const user_id = ticket.value.assigned_user_id;
+    const user_id = assigned_user_id.value;
 
     if (user_id === null) {
         return 'Usassigned';
@@ -75,23 +93,12 @@ const assigned_name = computed(() => {
     return user.value.first_name + ' ' + user.value.last_name;
 });
 
-// todo clean up?
-const category_ids = ref<number[]>([]);
-watch(
-    () => ticket.value?.category_ids,
-    (newIds) => {
-        if (newIds) {
-            category_ids.value = [...newIds];
-        }
-        
-    }
-)
-
+const allCategories = categoryStore.getters.getAll();
 const categories = computed(() => {
     if (!ticket.value) {
         return [];
     }
-    return categoryStore.getters.getAll().value.filter(category => category_ids.value.includes(category.id));
+    return allCategories.value.filter(category => category_ids.value.includes(category.id));
 });    
 const categoriesTitle = computed(() => categories.value.map(category => category.name).join(', '));
 
@@ -99,34 +106,56 @@ const admins = computed(() => {
     return userStore.getters.getAll().value.filter(user => user.is_admin);
 });
 
+// on page ticket editting
 
-const handleCommentDelete = async (commentId : number) => {
-    await commentStore.actions.deleteById(commentId);
+const activeMenu = ref<null | string>(null);
 
-    const copy = { ...ticket.value };
-    copy.comments = copy.comments.filter(comment => comment.id === commentId);
-    ticketStore.setters.set(copy);
-}
-
-// Temp for testing
-
-const handleAssignee = () => {
-    const id = getLoggedInUser.value?.id;
-
-    if (id == undefined) {
-        console.log('not logged in!');
+const toggleMenu = (name : string) => {
+    if (!isAdmin()) {
         return;
     }
 
-    ticketStore.actions.patchAssignee(ticket.value.id, id);
+    if (activeMenu.value === name) {
+        closeMenu();
+    } else {
+        activeMenu.value = name;
+    }
 }
 
-const handleCategories = async () => {
-    await ticketStore.actions.patchCategories(ticket.value.id, category_ids.value);
+const closeMenu = () => {
+    if (activeMenu.value === null || !isAdmin()) {
+        return;
+    }
+
+    // save dirty values on close
+    if (activeMenu.value === 'categories' && !arraysEqual(ticket.value.category_ids, category_ids.value)) {
+        ticketStore.actions.patchCategories(ticket.value.id, category_ids.value);
+    } else if (activeMenu.value === 'assignee' && ticket.value.assigned_user_id !== assigned_user_id.value) {
+        ticketStore.actions.patchAssignee(ticket.value.id, assigned_user_id.value);
+    } else if (activeMenu.value === 'status' && ticket.value.status !== status.value) {
+        ticketStore.actions.patchStatus(ticket.value.id, status.value);
+    }
+    
+    activeMenu.value = null;
 }
 
-const handleStatus = () => {
-    ticketStore.actions.patchStatus(ticket.value.id, 'COMPLETED');
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside)
+});
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', handleClickOutside)
+});
+
+const handleClickOutside = (event : PointerEvent) => {
+    const target = event.target as HTMLElement;
+
+    const clickedMenu = target.closest('.property-menu');
+    const clickedButton = target.closest('.property');
+
+    if (!clickedMenu && !clickedButton) {
+        closeMenu();
+    }
 }
 
 </script>
@@ -136,9 +165,7 @@ const handleStatus = () => {
         <div class="content-header">
             <div class="primary-header">
                 <h1 class="title">Ticket: {{ ticket.title }}</h1>
-                <button class="button" @click.prevent="handleAssignee">Assignee</button>
-                <button class="button" @click.prevent="handleCategories">Categories</button>
-                <button class="button" @click.prevent="handleStatus">Status</button>
+                <RouterLink class="button" :to="{ name: 'tickets.edit', params: { id: ticket.id } }">Edit Ticket</RouterLink>
             </div>
             <div class="secondary-header">
                 <p class="title">{{ user_name }} - {{ time }}</p>
@@ -158,25 +185,36 @@ const handleStatus = () => {
                     <div class="property-value">{{ user_name }}</div>
                 </div>
 
-                <div class="property">
+                <div class="property" @click.prevent="toggleMenu('assignee')">
                     <div class="property-key">Assigned To:</div>
                     <div class="property-value">{{ assigned_name }}</div>
-                    <!-- <div class="property-menu">
-                        <div v-for="admin in admins" key="admin.id">{{ admin.first_name }} {{ admin.last_name }}</div>
-                    </div> -->
+                    <div class="property-menu" v-if="activeMenu === 'assignee'" @click.stop>
+                        <UserSelect v-model="assigned_user_id" :users="admins" nullable />
+                    </div>
                 </div>
 
-                <div class="property">
+                <div class="property" @click.prevent="toggleMenu('status')">
                     <div class="property-key">Status:</div>
-                    <div class="property-value">{{ ticket.status }}</div>
-                    <!-- <div class="property-menu">
-                        <div>PENDING</div>
-                        <div>IN PROGRESS</div>
-                        <div>COMPLETED</div>
-                    </div> -->
+                    <div class="property-value">{{ status.replace('_', ' ') }}</div>
+                    <div class="property-menu" v-if="activeMenu === 'status'" @click.stop>
+                        <div class="status-select">
+                            <label for="status-pending">
+                                <input id="status-pending" type="radio" v-model="status" value="PENDING">
+                                <div class="value">PENDING</div>
+                            </label>
+                            <label for="status-in-progress">
+                                <input id="status-in-progress" type="radio" v-model="status" value="IN_PROGRESS">
+                                <div class="value">IN PROGRESS</div>
+                            </label>
+                            <label for="status-completed">
+                                <input id="status-completed" type="radio" v-model="status" value="COMPLETED">
+                                <div class="value">COMPLETED</div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="property">
+                <div class="property"  @click.prevent="toggleMenu('categories')">
                     <div class="property-key">Categories:</div>
                     <div class="property-value">
                         <div v-if="categories.length == 0">-</div>
@@ -184,9 +222,8 @@ const handleStatus = () => {
                             <div v-for="category in categories" :key="category.id" class="category">{{ category.name }}</div>
                         </div>
                     </div>
-                    <div class="property-menu">
-                        <CategorySelect v-model="category_ids" />
-                        <button class="button" @click.prevent="handleCategories">Save</button>
+                    <div class="property-menu" v-if="activeMenu === 'categories'" @click.stop>
+                        <CategorySelect v-model="category_ids" :categories="allCategories" />
                     </div>
                 </div>
 
@@ -215,7 +252,6 @@ const handleStatus = () => {
 
 .ticket .sidebar {
     background-color: rgb(216, 253, 253);
-    /* padding: 0.5em; */
 }
 
 .property {
@@ -242,54 +278,10 @@ const handleStatus = () => {
     border: 1px solid rgb(69, 171, 255);
 }
 
-/* .property-menu CategorySelect {
+.property-menu .category-select {
     max-height: 200px;
     overflow: scroll;
-} */
-
-/* .ticket .sidebar dl {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    grid-auto-rows: minmax(1.1em, auto);
-    gap: 0.5em 1em;
 }
-
-.ticket .sidebar dl > * {
-    min-height: 25px;
-} */
-
-/* .notes {
-    margin-top: 0.5em;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-}
-
-.notes .note {
-    background-color: white;
-    padding: 0.5em;
-    min-height: 100px;
-}
-
-.notes .note .note-header {
-    display: flex;
-}
-
-.notes .note .note-header .title {
-    flex-grow: 1;
-}
-
-.notes .note .note-header button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-
-.notes .note .note-content {
-    min-height: 75px;
-    margin-bottom: 0.5em;
-} */
 
 .categories {
     display: flex;
@@ -305,5 +297,27 @@ const handleStatus = () => {
     border-radius: 10%;
 }
 
+/* status select */
+
+.status-select label input {
+    width: 25px;
+    margin: 0;
+}
+
+.status-select label {
+    display: flex;
+    height: 25px;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.status-select label .value {
+    flex-grow: 1;
+}
+
+.status-select label:hover {
+    background-color: blue;
+}
 
 </style>

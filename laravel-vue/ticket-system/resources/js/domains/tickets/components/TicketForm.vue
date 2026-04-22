@@ -11,7 +11,7 @@ const emit = defineEmits(['submit']);
 const form = ref<Ticket>({ ...props.ticket });
 
 categoryStore.actions.fetchAll();
-// const categories = categoryStore.getters.getAll();    
+const categories = categoryStore.getters.getAll();    
 
 const handleSubmit = () => {
     emit('submit', form.value);
@@ -34,7 +34,7 @@ const handleSubmit = () => {
         <!-- <select name="categories" id="" v-model="form.category_ids" multiple>
             <option v-for="category in categories" :value="category.id" :key="category.id">{{ category.name }}</option>
         </select> -->
-        <CategorySelect v-model="form.category_ids"/>
+        <CategorySelect v-model="form.category_ids" :categories="categories" />
         <FormError name="category_ids" />
 
         <button class="button" type="submit">Save</button>

@@ -82,14 +82,19 @@ class TicketController extends Controller {
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $this->requiresAdmin();
-        $assigned_user = User::findOrFail($request->validated('assigned_user_id'));
-        if (!$assigned_user->is_admin) {
-            throw new HttpResponseException(response()->json([
-                'message' => 'Only admins can be assigned to tickets!',
-                'errors' => []
-            ], 401));
+        $assigned_user_id = $request->validated('assigned_user_id');
+        if ($assigned_user_id == null) {
+            $ticket->assignedUser()->dissociate(); // unsets assigned user
+        } else {
+            $assigned_user = User::findOrFail($request->validated('assigned_user_id'));
+            if (!$assigned_user->is_admin) {
+                throw new HttpResponseException(response()->json([
+                    'message' => 'Only admins can be assigned to tickets!',
+                    'errors' => []
+                ], 401));
+            }
+            $ticket->assignedUser()->associate($assigned_user);
         }
-        $ticket->assignedUser()->associate($assigned_user);
         $ticket->save();
         $ticket->load(self::getRelations($user));
         return new TicketResource($ticket);

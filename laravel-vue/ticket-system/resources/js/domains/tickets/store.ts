@@ -9,7 +9,7 @@ export const ticketStore = {
     setters: {...baseStore.setters},
     actions: {...baseStore.actions,
 
-        patchAssignee: async (ticketId : number, userId : number) => {
+        patchAssignee: async (ticketId : number, userId : number | null) => {
             const {data} = await patchRequest('tickets/' + ticketId + '/assignee', { 'assigned_user_id': userId });
             if (!data) {
                 return;

@@ -49,7 +49,7 @@ const assigned_username = computed(() => {
                 </div>
             </div>
         </td>
-        <td>{{ ticket.status }}</td>
+        <td>{{ ticket.status.replace('_', ' ') }}</td>
         <td class="short" :title=username>{{ username }}</td>
         <td v-if="assigned_user" class="short" :title=assigned_username>{{ assigned_username }}</td> 
         <td v-else class="unassigned" title="No User Assigned">Unassigned</td> 
