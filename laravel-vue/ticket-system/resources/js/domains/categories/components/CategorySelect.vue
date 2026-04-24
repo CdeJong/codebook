@@ -2,14 +2,13 @@
 import { Category } from '@/domains/categories/category';
 
 const props = defineProps<{ categories: Category[] }>();
-
-const categories = props.categories;
 const category_ids = defineModel<number[]>();
+
 </script>
 
 <template>
 <div class="category-select">
-    <label v-for="category in categories" :key="category.id" :for="'category-' + category.id">
+    <label v-for="category in props.categories" :key="category.id" :for="'category-' + category.id">
         <input type="checkbox" :id="'category-' + category.id" v-model="category_ids" :value="Number(category.id)" />
         <div class="value">{{ category.name }}</div>
     </label>
@@ -24,6 +23,7 @@ label input {
 }
 
 label {
+    padding: 0;
     display: flex;
     height: 25px;
     align-items: center;
@@ -36,7 +36,7 @@ label .value {
 }
 
 label:hover {
-    background-color: blue;
+    background-color: rgb(179, 244, 247);
 }
 
 </style>

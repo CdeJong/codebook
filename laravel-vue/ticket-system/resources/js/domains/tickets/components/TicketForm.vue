@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { categoryStore } from '@/domains/categories/store';
 import { Ticket } from '@/domains/tickets/ticket';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import FormError from '@/services/error/FormError.vue';
 import FormMessage from '@/services/error/FormMessage.vue';
 import CategorySelect from '@/domains/categories/components/CategorySelect.vue';
 
 const props = defineProps(['ticket']);
 const emit = defineEmits(['submit']);
-const form = ref<Ticket>({ ...props.ticket });
-
-categoryStore.actions.fetchAll();
+const form = ref<Ticket>({
+    ...props.ticket,
+    category_ids: [...props.ticket.category_ids]
+});
 const categories = categoryStore.getters.getAll();    
 
 const handleSubmit = () => {
@@ -31,12 +32,16 @@ const handleSubmit = () => {
         <FormError name="content" />
 
         <label for="categories">Categories:</label>
-        <!-- <select name="categories" id="" v-model="form.category_ids" multiple>
-            <option v-for="category in categories" :value="category.id" :key="category.id">{{ category.name }}</option>
-        </select> -->
         <CategorySelect v-model="form.category_ids" :categories="categories" />
         <FormError name="category_ids" />
 
         <button class="button" type="submit">Save</button>
     </form>
 </template>
+
+<style scoped>
+.category-select {
+    max-height: 150px;
+    overflow: scroll;
+}
+</style>

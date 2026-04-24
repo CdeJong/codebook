@@ -3,7 +3,7 @@
 import { ticketStore } from '@/domains/tickets/store';
 import { userStore } from '@/domains/users/store';
 import { categoryStore } from '@/domains/categories/store';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { format } from '@/utils/datetime';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import NoteSection from '@/domains/notes/components/NoteSection.vue';
@@ -13,15 +13,26 @@ import CategorySelect from '@/domains/categories/components/CategorySelect.vue';
 import { arraysEqual } from '@/utils/array';
 import UserSelect from '@/domains/users/components/UserSelect.vue';
 
+const router = useRouter();
 const route = useRoute();
 const id = +route.params.id;
 
-if (!isNaN(id)) {
-    // is number, fetch needed data
-    ticketStore.actions.fetchById(id);
-    userStore.actions.fetchAll();
-    categoryStore.actions.fetchAll();
-}
+onMounted(async () => {
+    if (isNaN(id)) {
+        router.replace({ name: 'notfound' });
+        return;
+    }
+
+    try {
+        await ticketStore.actions.fetchById(id);
+        await Promise.all([
+            userStore.actions.fetchAll(),
+            categoryStore.actions.fetchAll()
+        ]);
+    } catch (error) {
+        router.replace({ name: 'notfound' });
+    }
+});
 
 const ticket = ticketStore.getters.getById(id);
 
@@ -115,9 +126,9 @@ const toggleMenu = (name : string) => {
         return;
     }
 
-    if (activeMenu.value === name) {
-        closeMenu();
-    } else {
+    closeMenu(); // close & save current
+
+    if (activeMenu.value === null) {
         activeMenu.value = name;
     }
 }
@@ -195,7 +206,7 @@ const handleClickOutside = (event : PointerEvent) => {
 
                 <div class="property" @click.prevent="toggleMenu('status')">
                     <div class="property-key">Status:</div>
-                    <div class="property-value">{{ status.replace('_', ' ') }}</div>
+                    <div class="property-value">{{ status?.replace('_', ' ') }}</div>
                     <div class="property-menu" v-if="activeMenu === 'status'" @click.stop>
                         <div class="status-select">
                             <label for="status-pending">
@@ -248,6 +259,7 @@ const handleClickOutside = (event : PointerEvent) => {
 .ticket .content {
     padding: 0.5em;
     min-height: 50vh;
+    white-space: pre-wrap;
 }
 
 .ticket .sidebar {

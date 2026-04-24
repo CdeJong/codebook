@@ -4,19 +4,29 @@ import { userStore } from '@/domains/users/store';
 import { categoryStore } from '@/domains/categories/store';
 import TicketForm from '@/domains/tickets/components/TicketForm.vue';
 import { useRoute, useRouter } from 'vue-router';
+import { onMounted } from 'vue';
 import { Ticket } from '@/domains/tickets/ticket';
 
-
-const route = useRoute();
 const router = useRouter();
+const route = useRoute();
 const id = +route.params.id;
 
-if (!isNaN(id)) {
-    // is number, fetch needed data
-    ticketStore.actions.fetchById(id);
-    userStore.actions.fetchAll();
-    categoryStore.actions.fetchAll();
-}
+onMounted(async () => {
+    if (isNaN(id)) {
+        router.replace({ name: 'notfound' });
+        return;
+    }
+
+    try {
+        await ticketStore.actions.fetchById(id);
+        await Promise.all([
+            userStore.actions.fetchAll(),
+            categoryStore.actions.fetchAll()
+        ]);
+    } catch (error) {
+        router.replace({ name: 'notfound' });
+    }
+});
 
 const ticket = ticketStore.getters.getById(id);
 

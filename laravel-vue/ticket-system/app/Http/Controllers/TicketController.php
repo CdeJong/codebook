@@ -74,6 +74,7 @@ class TicketController extends Controller {
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $ticket->update($request->validated());
+        $ticket->categories()->sync($request->validated('category_ids'));
         $ticket->load(self::getRelations($user));
         return new TicketResource($ticket);
     }

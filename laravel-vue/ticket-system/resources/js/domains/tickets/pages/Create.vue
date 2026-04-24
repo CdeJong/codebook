@@ -4,6 +4,10 @@ import { ref } from 'vue';
 import { Ticket } from '@/domains/tickets/ticket';
 import { useRouter } from 'vue-router';
 import { ticketStore } from '@/domains/tickets/store';
+import { categoryStore } from '@/domains/categories/store';
+
+// used in TicketForm
+categoryStore.actions.fetchAll();
 
 const router = useRouter();
 
