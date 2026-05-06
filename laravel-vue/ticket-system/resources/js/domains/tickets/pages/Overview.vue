@@ -3,6 +3,7 @@ import { categoryStore } from '@/domains/categories/store';
 import TicketTable from '@/domains/tickets/components/TicketTable.vue';
 import { ticketStore } from '@/domains/tickets/store';
 import { userStore } from '@/domains/users/store';
+import { useDialog } from '@/services/dialog';
 
 ticketStore.actions.fetchAll();
 

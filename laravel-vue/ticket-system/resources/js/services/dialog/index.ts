@@ -1,64 +1,28 @@
-import { computed, markRaw, ref } from "vue"
-import { ConfirmDialogData, NoticeDialogData } from "@/services/dialog/types"
-import ConfirmDialog from "./ConfirmDialog.vue";
-import NoticeDialog from "./NoticeDialog.vue";
+import { ref, Ref } from "vue"
+import { Dialog } from "@/services/dialog/types"
 
-const currentDialog = ref<ConfirmDialogData | NoticeDialogData | null>(null);
+const openDialog = ref<Dialog | null>(null);
 
-export const getCurrentDialog = computed(() => currentDialog.value);
-
-export const closeCurrent = () => {
-    if (!currentDialog.value) {
-        return;
+export const useDialog = () => {
+    const get = () : Ref<Dialog | null> => {
+        return openDialog;
     }
-    currentDialog.value.onClose?.();
-    currentDialog.value = null;
-}
 
-export const confirmCurrent = () => {
-    if (!currentDialog.value) {
-        return;
+    const show = (dialog : Dialog) : void => {
+        openDialog.value = {
+            buttons: [],
+            onClose: null,
+            ...dialog
+        }
     }
-    if ("onConfirm" in currentDialog.value) {
-        currentDialog.value.onConfirm?.(); // run if not null
-    }
-    currentDialog.value.onClose?.(); // run if not null
-    currentDialog.value = null;
-}
 
-
-export const showConfirm = (
-    title : string,
-    description : string,
-    onClose : null | (() => void) = null,
-    onConfirm : null | (() => void) = null,
-    closeButtonText : string = "Close",
-    confirmButtonText : string = "Confirm"
-) => {
-    closeCurrent();
-    currentDialog.value = {
-        component: markRaw(ConfirmDialog),
-        title: title,
-        description: description,
-        closeButtonText: closeButtonText,
-        onClose: onClose,
-        confirmButtonText: confirmButtonText,
-        onConfirm: onConfirm
+    const close = () => {
+        if (openDialog.value === null) {
+            return;
+        }
+        openDialog.value.onClose?.();
+        openDialog.value = null;
     }
-}
 
-export const showNotice = (
-    title : string,
-    description : string,
-    onClose : null | (() => void) = null, 
-    closeButtonText : string = "Okay",
-) => {
-    closeCurrent();
-    currentDialog.value = {
-        component: markRaw(NoticeDialog),
-        title: title,
-        description: description,
-        closeButtonText: closeButtonText,
-        onClose: onClose,
-    }
+    return { get, show, close }
 }

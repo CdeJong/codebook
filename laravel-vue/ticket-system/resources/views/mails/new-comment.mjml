@@ -1,0 +1,39 @@
+<mjml>
+  <mj-body>
+    <mj-section background-color='aqua'>
+    	<mj-column>
+      	<mj-text
+          align="center"
+          font-weight="bold"
+          font-size="22px"
+        >&lt;Company Name&gt;</mj-text>
+        
+        <mj-text
+          align="center"
+          font-size="16px"
+        >Ticket System</mj-text>
+      </mj-column>
+    </mj-section>
+    
+    <mj-section background-color='white'>
+      <mj-column>
+      	<mj-text
+          font-size="14px"
+        >Hello FIRST LAST,</mj-text>
+        <mj-text
+          font-size="14px"
+        >FIRST LAST posted a new comment on your ticket: TITLE</mj-text>
+        
+        <mj-button 
+        	background-color="rgb(0, 204, 255)"
+          color='black' 
+          href="TICKET_LINK"
+          align="left"
+        >Visit Ticket</mj-button>
+      </mj-column>
+      
+    </mj-section>
+    
+    <mj-section background-color='aqua'></mj-section>
+  </mj-body>
+</mjml>

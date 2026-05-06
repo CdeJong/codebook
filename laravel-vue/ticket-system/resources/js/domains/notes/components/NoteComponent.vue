@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Note } from '@/domains/notes/note';
-import { showConfirm } from '@/services/dialog';
+import { useDialog } from '@/services/dialog';
 import { format } from '@/utils/datetime';
 import { ref, computed, watch } from 'vue';
 import { userStore } from '@/domains/users/store';
 
-const note = defineModel<Note>({ required: true });
+const dialog = useDialog();
 
+const note = defineModel<Note>({ required: true });
 const emit = defineEmits(['deleteNote', 'updateNote']);
 
 const isEditing = ref<boolean>(false);
@@ -17,15 +18,16 @@ const handleEdit = () => {
 }
 
 const handleDelete = () => {
-    showConfirm(
-        "Delete note", 
-        "Are you sure you want to delete this note?",
-        null,
-        handleConfirmedDelete
-    );
+    dialog.show({
+        title: 'Delete Note',
+        description: 'Are you sure you want to delete this note?',
+        buttons: [{ text: 'Confirm', onClick: handleConfirmedDelete, style: 'danger' }, { text: 'Cancel' }],
+        style: 'danger'
+    })
 }
 
 const handleConfirmedDelete = () => {
+    dialog.close();
     emit('deleteNote', note.value.id);
 }
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Resources\CommentResource;
-use App\Mail\NewComment;
+use App\Mail\NewCommentMail;
 use App\Models\Comment;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +29,7 @@ class CommentController extends Controller {
         if ($comment->ticket->user->id !== $user->id) {
             $ticket = $comment->ticket;
             $ticket_user = $ticket->user;
-            Mail::to($ticket_user)->send(new NewComment($ticket_user, $user, $ticket));
+            Mail::to($ticket_user)->send(new NewCommentMail($ticket_user, $user, $ticket));
         }
         
         return new CommentResource($comment);

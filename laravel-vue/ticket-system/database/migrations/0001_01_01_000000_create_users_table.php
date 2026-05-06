@@ -24,8 +24,19 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // uses Email as primary key? and no user_id relation?
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+
+        Schema::create('password_resets', function (Blueprint $table) {
+            $table->id();
+            $table->string('public_id')->unique();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
@@ -47,6 +58,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('password_resets');
         Schema::dropIfExists('sessions');
     }
 };

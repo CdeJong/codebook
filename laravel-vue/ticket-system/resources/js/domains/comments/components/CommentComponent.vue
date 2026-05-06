@@ -3,7 +3,7 @@ import { Comment } from '@/domains/comments/comment';
 import { format } from '@/utils/datetime';
 import { userStore } from '@/domains/users/store';
 import { ref, computed } from 'vue';
-import { showConfirm, showNotice } from '@/services/dialog';
+import { useDialog } from '@/services/dialog';
 import { isAdminOrHasId } from '@/services/auth';
 
 
@@ -12,7 +12,8 @@ const comment = defineModel<Comment>({ required: true });
 const emit = defineEmits(['deleteComment', 'updateComment']);
 
 const isEditing = ref<boolean>(false);
-const formComment = ref<Comment>({ ...comment.value }); 
+const formComment = ref<Comment>({ ...comment.value });
+const dialog = useDialog(); 
 
 const user = userStore.getters.getById(comment.value.user_id);
 const username = computed(() => {
@@ -31,15 +32,16 @@ const handleEdit = () => {
 }
 
 const handleDelete = () => {
-    showConfirm(
-        "Delete comment", 
-        "Are you sure you want to delete this comment?",
-        null,
-        handleConfirmedDelete
-    );
+    dialog.show({ 
+        title: 'Delete comment', 
+        description: 'Are you sure you want to delete this comment?',
+        buttons: [{ text: 'Yes', onClick: handleConfirmedDelete, style: 'danger' }, { text: 'Cancel' }],
+        style: 'danger'
+    });
 }
 
 const handleConfirmedDelete = () => {
+    dialog.close();
     emit('deleteComment', comment.value.id);
 }
 
@@ -55,12 +57,11 @@ const handleCancel = () => {
 }
 
 const handleReport = () => {
-    showNotice(
-        'Comment Report',
-        'Thank you for the report! We will look into it as fast as possible!',
-        null, // ye we don't do anything with your report lol!
-        'Ok'
-    );
+    dialog.show({ 
+        title: 'Report Comment', 
+        description: 'Thank you for the report! We will look into it as fast as possible!',
+        buttons: [{ text: 'Ok' }],
+    });
 }
 </script>
 

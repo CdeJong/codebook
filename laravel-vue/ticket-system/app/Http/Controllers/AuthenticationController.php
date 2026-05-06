@@ -7,9 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Mail\UserRegistrationMail;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Models\User;
-
+use Illuminate\Support\Facades\Mail;
 
 class AuthenticationController extends Controller {
     
@@ -42,10 +43,11 @@ class AuthenticationController extends Controller {
     public function register(RegisterRequest $request) {
         $validated = $request->validated();
 
-        User::create($validated);
+        $registered_user = User::create($validated);
+
+        Mail::to($registered_user)->send(new UserRegistrationMail($registered_user));
 
         return response()->json(['message' => 'Account created! use /api/login to authenticate!']);
     }
-
 
 }

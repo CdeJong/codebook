@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements CanResetPassword
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -50,6 +51,10 @@ class User extends Authenticatable
         ];
     }
 
+    public function getProfileUrlAttribute() : string {
+        return config('app.url') . '/profile/';
+    }
+
     public function tickets() : HasMany {
         return $this->hasMany(Ticket::class);
     }
@@ -60,6 +65,10 @@ class User extends Authenticatable
 
     public function comments() : HasMany {
         return $this->hasMany(Comment::class);
+    }
+
+    public function passwordResetRequests() : HasMany {
+        return $this->hasMany(PasswordReset::class);
     }
 
 }

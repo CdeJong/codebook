@@ -24,7 +24,7 @@ class UpdateUserRequest extends BaseFormRequest {
             'first_name' => 'required|string|max:20',
             'last_name' => 'required|string|max:20',
             'email' => 'required|email',
-            'phone_number' => 'required|string|max:50',
+            'phone_number' => 'string|max:50',
             'is_admin' => 'boolean'
         ];
     }

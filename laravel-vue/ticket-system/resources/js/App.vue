@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { getLoggedInUser, logout, isAdmin } from '@/services/auth';
-import DialogContainer from './services/dialog/DialogContainer.vue';
+import DialogComponent from '@/services/dialog/DialogComponent.vue';
 
 const router = useRouter();
 
@@ -38,6 +38,6 @@ const user = getLoggedInUser;
         <router-view />
     </div>
 
-    <DialogContainer />
+    <DialogComponent />
     
 </template>

@@ -198,7 +198,10 @@ const handleClickOutside = (event : PointerEvent) => {
 
                 <div class="property" @click.prevent="toggleMenu('assignee')">
                     <div class="property-key">Assigned To:</div>
-                    <div class="property-value">{{ assigned_name }}</div>
+                    <div class="property-value">
+                        <p>{{ assigned_name }}</p>
+                        <i v-if="isAdmin()" class="fa-solid fa-pen primary"></i>
+                    </div>
                     <div class="property-menu" v-if="activeMenu === 'assignee'" @click.stop>
                         <UserSelect v-model="assigned_user_id" :users="admins" nullable />
                     </div>
@@ -206,7 +209,10 @@ const handleClickOutside = (event : PointerEvent) => {
 
                 <div class="property" @click.prevent="toggleMenu('status')">
                     <div class="property-key">Status:</div>
-                    <div class="property-value">{{ status?.replace('_', ' ') }}</div>
+                    <div class="property-value">
+                        <p>{{ status?.replace('_', ' ') }}</p>
+                        <i v-if="isAdmin()" class="fa-solid fa-pen primary"></i>
+                    </div>
                     <div class="property-menu" v-if="activeMenu === 'status'" @click.stop>
                         <div class="status-select">
                             <label for="status-pending">
@@ -231,6 +237,10 @@ const handleClickOutside = (event : PointerEvent) => {
                         <div v-if="categories.length == 0">-</div>
                         <div v-else class="categories" :title="categoriesTitle">
                             <div v-for="category in categories" :key="category.id" class="category">{{ category.name }}</div>
+                            <div v-if="isAdmin()" class="edit-category">
+                                <i class="fa-solid fa-pen primary"></i>
+                            </div>
+                            
                         </div>
                     </div>
                     <div class="property-menu" v-if="activeMenu === 'categories'" @click.stop>
@@ -271,13 +281,30 @@ const handleClickOutside = (event : PointerEvent) => {
     position: relative;
 }
 
+.property i {
+    cursor: pointer;
+    transition: 0.5s opacity;
+    opacity: 0;
+}
+
+.property:hover i {
+    opacity: 1;
+}
+
 .property-key {
     background-color: rgb(146, 255, 255);
     padding: 0.5em;
 }
 
 .property-value {
+    display: flex;
+    align-items: center;
     padding: 0.5em;
+    gap: 0.25em;
+}
+
+.property-value > i {
+    color: rgb(1, 141, 141);
 }
 
 .property-menu {
@@ -300,13 +327,17 @@ const handleClickOutside = (event : PointerEvent) => {
     width: 100%;
     gap: 0.25em;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .category {
-    flex: 0 0 auto;
     padding: 0.25em;
     background-color: aqua;
     border-radius: 10%;
+}
+
+.edit-category {
+    color: rgb(1, 141, 141);    
 }
 
 /* status select */

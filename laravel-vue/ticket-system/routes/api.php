@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/login', [AuthenticationController::class, 'login']);
 Route::post('/register', [AuthenticationController::class, 'register']);
+
+Route::get('/reset-password', [PasswordResetController::class, 'verify']); 
+Route::post('/reset-password', [PasswordResetController::class, 'store']);
+Route::put('/reset-password', [PasswordResetController::class, 'update']);
 

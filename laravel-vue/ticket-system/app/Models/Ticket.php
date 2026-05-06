@@ -17,6 +17,10 @@ class Ticket extends Model {
         "content"
     ];
 
+    public function getUrlAttribute() : string {
+        return config('app.url') . '/tickets/' . $this->getKey();
+    }
+
     public function getIsCompletedAttribute() : bool {
         return $this->status === 'COMPLETED';
     }

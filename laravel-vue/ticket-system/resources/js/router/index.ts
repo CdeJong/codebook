@@ -67,7 +67,7 @@ router.beforeEach((to, _) => {
     const user = getLoggedInUser.value;
 
     if(!to.meta) {
-        return true; // should not be possible if createRoute is used everywhere, and the home redirect I assume
+        return true; // should not be possible if createRoute is used everywhere, and the home redirect
     }
 
     if (to.meta.requiresAdmin) {
@@ -90,6 +90,6 @@ router.beforeEach((to, _) => {
         return { name: 'auth.profile' };
     }
 
-    // public pages, or actor is allowed on this page in current context
+    // public pages, or actor is allowed on this page in the current context
     return true;
 });

@@ -43,8 +43,17 @@ const handleLogin = () => {
     <FormError name="email" />
     <label for="password">Password</label>
     <input type="password" name="password" id="password" required v-model="form.password">
+    <RouterLink :to="{ name: 'auth.password-reset'}">I forgot my password</RouterLink>
     <FormError name="password" />
     <button class="button" type="submit">Login</button>
 </form>
 
 </template>
+
+<style scoped>
+.form a {
+    padding-left: 5px;
+    margin-bottom: 0.5em;
+}
+
+</style>

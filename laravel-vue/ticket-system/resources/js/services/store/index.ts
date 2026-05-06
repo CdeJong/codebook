@@ -15,6 +15,8 @@ export const storeModuleFactory = <T extends Identifiable>(moduleName : string) 
     const setters = {
 
         setAll: (items : T[]) => {
+            state.value = {}; // clear state to fix issues on swithing users
+
             for (const item of items) {
                 setters.set(item);
             }

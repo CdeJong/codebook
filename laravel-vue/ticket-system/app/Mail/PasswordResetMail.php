@@ -2,16 +2,17 @@
 
 namespace App\Mail;
 
-use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\PasswordReset;
 
-class NewComment extends Mailable
+class PasswordResetMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -20,8 +21,7 @@ class NewComment extends Mailable
      */
     public function __construct(
         protected User $user,
-        protected User $comment_user,
-        protected Ticket $ticket,
+        protected string $password_reset_url
     ) {}
 
     /**
@@ -30,7 +30,7 @@ class NewComment extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Comment',
+            subject: 'Password Reset',
         );
     }
 
@@ -40,8 +40,8 @@ class NewComment extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.new-comment',
-            with: ["user" => $this->user, "comment_user" => $this->comment_user, "ticket" => $this->ticket]
+            view: 'mails.password-reset',
+            with: ["user" => $this->user, 'password_reset_url' => $this->password_reset_url ]
         );
     }
 

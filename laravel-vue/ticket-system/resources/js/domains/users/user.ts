@@ -4,7 +4,7 @@ export type User = {
     last_name: string,
     is_admin: boolean,
     email: string,
-    phone_number: string,
+    phone_number: string | null,
     created_at: string
 }
 
