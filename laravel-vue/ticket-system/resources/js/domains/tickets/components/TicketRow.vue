@@ -99,7 +99,6 @@ const assigned_username = computed(() => {
     overflow: hidden;
     gap: 0.25em;
     position: relative;
-    /* margin-right: 30px; MAYBE MOVE THIS TO LAST CATEGORY?*/
 }
 
 .category {
@@ -108,6 +107,10 @@ const assigned_username = computed(() => {
     background-color: aqua;
     border-radius: 10%;
     font-size: 0.8em;
+}
+
+.category:last-child {
+    margin-right: 30px;
 }
 
 .categories::after {
