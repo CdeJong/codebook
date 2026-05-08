@@ -15,8 +15,8 @@ class StoreCommentRequest extends BaseFormRequest {
     public function rules(): array {
         
         return [
-            'ticket_id' => 'required|integer|exists:tickets,id',
-            'content' => 'required|string|max:2000'
+            'ticket_id' => ['required', 'integer', 'exists:tickets,id'],
+            'content' => ['required', 'string', 'max:2000']
         ];
     }
 }

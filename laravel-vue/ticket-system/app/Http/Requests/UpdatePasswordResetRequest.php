@@ -16,9 +16,9 @@ class UpdatePasswordResetRequest extends BaseFormRequest {
     public function rules(): array {
         
         return [
-            'token' => 'required|string',
-            'public_id' => 'required|string|exists:password_resets,public_id',
-            'password' => 'required|confirmed'
+            'token' => ['required', 'string'],
+            'public_id' => ['required', 'string'],
+            'password' => ['required', 'confirmed']
         ];
     }
 }

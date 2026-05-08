@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import CategoryTable from '@/domains/categories/components/CategoryTable.vue';
-import { categoryStore } from '../store';
+import { categoryStore } from '@/domains/categories/store';
 
 categoryStore.actions.fetchAll();
 

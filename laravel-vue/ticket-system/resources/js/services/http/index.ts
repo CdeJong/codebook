@@ -39,8 +39,6 @@ http.interceptors.response.use(
 
             setErrorBag(errors);
             setMessage(message);
-
-            // return; // so 422 errors aren't forwarded
         }
         return Promise.reject(error);
     }

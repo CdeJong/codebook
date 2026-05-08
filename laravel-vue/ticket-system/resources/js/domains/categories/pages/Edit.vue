@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import { categoryStore } from '@/domains/categories/store';
 import CategoryForm from '@/domains/categories/components/CategoryForm.vue';
-import { Category } from '../category';
+import { Category } from '@/domains/categories/category';
 
 const router = useRouter();
 const route = useRoute();

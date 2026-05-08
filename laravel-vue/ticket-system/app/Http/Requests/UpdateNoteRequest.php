@@ -11,10 +11,9 @@ class UpdateNoteRequest extends BaseFormRequest {
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(): array{
-
+    public function rules(): array {
         return [
-            'content' => 'required|string|max:2000'
+            'content' => ['required', 'string', 'max:2000']
         ];
     }
 }

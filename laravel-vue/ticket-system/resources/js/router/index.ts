@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import { ticketRoutes } from '@/domains/tickets/routes';
 import { authRoutes } from '@/domains/authentication/routes';
 import { getLoggedInUser, isLoggedIn } from '@/services/auth';
-import NotFound from './NotFound.vue';
+import NotFound from '@/router/NotFound.vue';
 import { categoryRoutes } from '@/domains/categories/routes';
 import { userRoutes } from '@/domains/users/routes';
 
@@ -66,17 +66,13 @@ export const router = createRouter({
 router.beforeEach((to, _) => {
     const user = getLoggedInUser.value;
 
-    if(!to.meta) {
-        return true; // should not be possible if createRoute is used everywhere, and the home redirect
-    }
-
     if (to.meta.requiresAdmin) {
         if (!user) {
             return { name: 'auth.login', query: { redirect: to.fullPath } }
         }
 
         if (!user.is_admin) {
-            return { name: 'notfound' } // todo change this to something else?
+            return { name: 'notfound' } 
         }
 
         return true; // logged in admin

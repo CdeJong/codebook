@@ -6,12 +6,15 @@ import { postRequest } from '@/services/http';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const form = ref({ first_name: '', last_name: '', email: '', password: '' });
+const form = ref({ first_name: '', last_name: '', email: '', password: '', password_confirmation: '' });
 
-const handleRegister = () => {
-    postRequest('/register', form.value).then(
-        _ => router.push({ name: 'auth.login' })
-    );
+const handleRegister = async () => {
+    try {
+        await postRequest('/register', form.value);
+        router.push({ name: 'auth.login' });
+    } catch (error) {
+        console.log('handleRegister', error);
+    }
 }
  
 </script>
@@ -32,20 +35,24 @@ const handleRegister = () => {
         <FormMessage />
 
         <label for="first_name">First name</label>
-        <input type="text" name="first_name" id="first_name" v-model="form.first_name" required>
+        <input type="text" id="first_name" v-model="form.first_name" required>
         <FormError name="first_name" />
 
         <label for="last_name">Last name</label>
-        <input type="text" name="last_name" id="last_name" v-model="form.last_name" required>
+        <input type="text" id="last_name" v-model="form.last_name" required>
         <FormError name="last_name" />
 
         <label for="email">E-mail</label>
-        <input type="email" name="email" id="email" v-model="form.email" required>
+        <input type="email" id="email" v-model="form.email" required>
         <FormError name="email" />
 
         <label for="password">Password</label>
-        <input type="password" name="password" id="password" v-model="form.password" required>
+        <input type="password" id="password" v-model="form.password" required>
         <FormError name="password" />
+
+        <label for="password_confirmation">Confirm Password</label>
+        <input type="password" id="password_confirmation" v-model="form.password_confirmation" required>
+        <FormError name="password_confirmation" />
 
         <button class="button" type="submit">Register</button>
     </form>

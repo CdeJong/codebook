@@ -25,6 +25,7 @@ return new class extends Migration
         });
 
         // uses Email as primary key? and no user_id relation?
+        // Unused, see password_resets below
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');

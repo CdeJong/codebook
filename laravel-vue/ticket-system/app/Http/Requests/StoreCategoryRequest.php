@@ -13,7 +13,7 @@ class StoreCategoryRequest extends BaseFormRequest {
      */
     public function rules(): array {
         return [
-            'name' => 'required|max:255'
+            'name' => ['required', 'max:255']
         ];
     }
 }

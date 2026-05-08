@@ -14,8 +14,8 @@ class PatchTicketCategoriesRequest extends BaseFormRequest
      */
     public function rules(): array {
         return [
-            'category_ids' => 'array',
-            'category_ids.*' => 'integer|exists:categories,id'
+            'category_ids' => ['array'],
+            'category_ids.*' => ['integer', 'exists:categories,id']
         ];
     }
 }

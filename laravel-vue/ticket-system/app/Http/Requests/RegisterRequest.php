@@ -17,7 +17,7 @@ class RegisterRequest extends BaseFormRequest {
             'first_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
             'email' => ['required', 'string', 'email', 'unique:users,email'],
-            'password' => ['required', 'string']
+            'password' => ['required', 'string', 'confirmed']
         ];
     }
 }

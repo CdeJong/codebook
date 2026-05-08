@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import UserForm from '@/domains/users/components/UserForm.vue';
+import { onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { userStore } from '@/domains/users/store';
 import { User } from '@/domains/users/user';
@@ -8,10 +9,18 @@ const router = useRouter();
 const route = useRoute();
 const id = +route.params.id;
 
-if (!isNaN(id)) {
-    // is number, fetch needed data
-    userStore.actions.fetchById(id);
-}
+onMounted(async () => {
+    if (isNaN(id)) {
+        router.replace({ name: 'notfound' });
+        return;
+    }
+
+    try {
+        await userStore.actions.fetchById(id);
+    } catch (error) {
+        router.replace({ name: 'notfound' });
+    }
+});
 
 const user = userStore.getters.getById(id);
 

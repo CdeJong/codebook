@@ -16,12 +16,10 @@ class StoreTicketRequest extends BaseFormRequest {
     public function rules(): array {
         
         return [
-            //'assigned_user_id' => 'integer|exists:users,id', # todo not required, as normal users cannot assign an admin, but admins can?
-            // 'status' => ['string', Rule::in(['PENDING', 'IN_PROGRESS', 'RESOLVED'])], # not required, but it should be an existing from list for admins
-            'title' => 'required|string|max:250',
-            'content' => 'required|string|max:2000',
-            'category_ids' => 'array',
-            'category_ids.*' => 'integer|exists:categories,id'
+            'title' => ['required', 'string', 'max:250'],
+            'content' => ['required', 'string', 'max:2000'],
+            'category_ids' => ['array'],
+            'category_ids.*' => ['integer', 'exists:categories,id']
         ];
     }
 }

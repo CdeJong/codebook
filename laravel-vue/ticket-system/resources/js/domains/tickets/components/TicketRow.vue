@@ -99,6 +99,7 @@ const assigned_username = computed(() => {
     overflow: hidden;
     gap: 0.25em;
     position: relative;
+    /* margin-right: 30px; MAYBE MOVE THIS TO LAST CATEGORY?*/
 }
 
 .category {

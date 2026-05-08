@@ -14,7 +14,7 @@ const router = useRouter();
 const ticket = ref<Ticket>({
     title: '',
     content: '',
-    category_ids: [], // todo might need to change this to ids?
+    category_ids: [],
 
     // not important for form atm
     id: 0,

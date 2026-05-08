@@ -15,7 +15,7 @@ export default {
         }
 
         const resize = () => {
-            // causes some glitchy behavior
+            // causes some glitchy behavior, but without it never makes the textarea small again
             // element.style.height = 'auto';
             element.style.height = element.scrollHeight + 'px';    
         }

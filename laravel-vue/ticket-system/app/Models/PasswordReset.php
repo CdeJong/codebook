@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PasswordReset extends Model {
     
-    public $timestamps = false; // update to laravel 13: #[WithoutTimestamps]
+    public $timestamps = false;
 
     /**
      * The attributes that should be hidden for serialization.

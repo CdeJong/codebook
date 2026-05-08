@@ -21,11 +21,11 @@ class UpdateUserRequest extends BaseFormRequest {
     public function rules(): array{
 
         return [
-            'first_name' => 'required|string|max:20',
-            'last_name' => 'required|string|max:20',
-            'email' => 'required|email',
-            'phone_number' => 'string|max:50',
-            'is_admin' => 'boolean'
+            'first_name' => ['required', 'string', 'max:20'],
+            'last_name' => ['required', 'string', 'max:20'],
+            'email' => ['required', 'email'],
+            'phone_number' => ['string', 'max:50'],
+            'is_admin' => ['boolean']
         ];
     }
 }

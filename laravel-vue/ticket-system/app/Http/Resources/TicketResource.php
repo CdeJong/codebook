@@ -17,7 +17,7 @@ class TicketResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user->id,
-            'assigned_user_id' => $this->assignedUser?->id, // could be null
+            'assigned_user_id' => $this->assignedUser?->id,
             'category_ids' => $this->categories->pluck('id'),
             'title' => $this->title,
             'status' => $this->status,

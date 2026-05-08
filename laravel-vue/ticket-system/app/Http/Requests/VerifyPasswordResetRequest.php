@@ -15,8 +15,8 @@ class VerifyPasswordResetRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'public_id' => 'required|string|exists:password_resets,public_id',
-            'token' => 'required|string'
+            'public_id' => ['required', 'string'],
+            'token' => ['required', 'string']
         ];
     }
 

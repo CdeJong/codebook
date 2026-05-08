@@ -1,6 +1,5 @@
 <script setup lang="ts">
 
-import ErrorPopUp from '@/services/error/ErrorPopUp.vue';
 import { getLoggedInUser } from '@/services/auth'
 import { format } from '@/utils/datetime';
 
@@ -9,8 +8,6 @@ const user = getLoggedInUser;
 </script>
 
 <template>
-
-    <ErrorPopUp />
 
     <div class="content-header">
         <div class="primary-header">

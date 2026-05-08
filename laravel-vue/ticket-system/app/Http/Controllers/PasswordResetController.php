@@ -53,14 +53,13 @@ class PasswordResetController extends Controller {
             Mail::to($user)->send(new PasswordResetMail($user, $url));
         }
 
-        PasswordResetRequestCleanUp::dispatch();
+        PasswordResetRequestCleanUp::dispatch(); // remove in production, change it to a crontab
 
-        return response()->json(['message' => 'Password reset request received']);
+        return response()->json(['message' => 'Password reset request is being send!']);
     }
 
     private function createPasswordResetUrl(string $public_id, string $token) {
         return config('app.url') . '/password-reset?public_id=' . $public_id . '&token=' . $token;
-    
     }
 
     public function update(UpdatePasswordResetRequest $request) {
@@ -82,7 +81,9 @@ class PasswordResetController extends Controller {
         $user->password = $request->validated('password');
         $user->save();
 
-        PasswordResetRequestCleanUp::dispatch($password_reset->public_id);
+        $password_reset->delete();
+
+        PasswordResetRequestCleanUp::dispatch(); // remove in production, change it to a crontab
 
         return response()->json(['message' => 'Password successfully updated']);  
     } 
