@@ -1,4 +1,4 @@
-import { multiply } from "@/math";
+import { multiply } from "@/utils/math";
 
 describe('multiply function', () => {
     describe('basic operations', () => {

@@ -1,4 +1,4 @@
-import { add } from "@/math";
+import { add } from "@/utils/math";
 
 describe('add function', () => {
 

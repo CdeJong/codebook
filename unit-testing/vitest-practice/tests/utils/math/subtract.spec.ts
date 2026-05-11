@@ -1,4 +1,4 @@
-import { subtract } from "@/math";
+import { subtract } from "@/utils/math";
 
 describe('subtract function', () => {
 
@@ -33,7 +33,7 @@ describe('subtract function', () => {
     });
     
     describe('edge cases', () => {
-        
+
         it('should handle zero correctly', () => {
             // Arrange
             const firstNumber = 5;

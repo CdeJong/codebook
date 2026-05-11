@@ -1,4 +1,4 @@
-import { calculateDiscount } from "@/math";
+import { calculateDiscount } from "@/utils/math";
 
 describe('calcutateDiscount function', () => {
 
