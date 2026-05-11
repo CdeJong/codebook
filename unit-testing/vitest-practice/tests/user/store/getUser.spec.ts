@@ -41,6 +41,18 @@ describe('getUser function', () => {
             expect(result).toBeUndefined();
         });
 
+        it('should not find easter egg user in store', () => {
+            // Arrange
+            const id = 500;
+            const expectedResult = {id: 500, name: 'Easter Egg'};
+
+            // Act
+            const result = getUser(id);
+
+            // Assert
+            expect(result).toMatchObject(expectedResult)
+        });
+
     });
 
 });
