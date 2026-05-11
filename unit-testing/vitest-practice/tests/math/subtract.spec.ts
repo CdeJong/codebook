@@ -1,6 +1,7 @@
 import { subtract } from "@/math";
 
 describe('subtract function', () => {
+
     describe('basic operations', () => {
 
         it('should handle positive numbers correctly', () => {
@@ -32,6 +33,7 @@ describe('subtract function', () => {
     });
     
     describe('edge cases', () => {
+        
         it('should handle zero correctly', () => {
             // Arrange
             const firstNumber = 5;
@@ -59,5 +61,5 @@ describe('subtract function', () => {
         });
 
     });
-    
+
 });
