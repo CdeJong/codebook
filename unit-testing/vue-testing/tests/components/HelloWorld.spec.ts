@@ -3,13 +3,13 @@ import HelloWorld from '@/components/HelloWorld.vue';
 
 describe('HelloWorld', () => {
     it('should mount without errors', () => {
-        // Arrange: Definieer de props die de component verwacht
+        // Arrange
         const msg = 'Hello Vitest';
 
-        // Act: Mount de component (shallowMount is voldoende voor deze test)
+        // Act
         const wrapper = shallowMount(HelloWorld, { props: { msg } });
 
-        // Assert: Controleer of de wrapper bestaat
+        // Assert
         expect(wrapper.exists()).toBe(true);
     });
 });
