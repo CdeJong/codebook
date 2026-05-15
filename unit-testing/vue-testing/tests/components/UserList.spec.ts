@@ -115,4 +115,24 @@ describe('UserList', () => {
         expect(wrapper.findAllByDataTest('user-item')).toHaveLength(4);
         expect(wrapper.findByDataTest('user-list').exists()).toBe(true);
     });
+
+    // Coverage
+    it('should emit delete (with the correct id) on clicking the delete button', async () => {
+        // Arrange
+        const id = 0
+        const users = [
+            { id: 0, name: 'Tester', email: 'tester@example.com' },
+            { id: 1, name: 'User', email: 'user@example.com' },
+            { id: 2, name: 'Admin', email: 'admin@example.com' },
+            { id: 3, name: 'Owner', email: 'owner@example.com' }
+        ];
+
+        // Act
+        const wrapper = shallowMount(UserList, { props: { users } });
+        await wrapper.findAllByDataTest('delete-button')[id].trigger('click');
+
+        // Assert
+        expect(wrapper.emitted('delete')?.[0]).toStrictEqual([id]);
+    });
+
 });

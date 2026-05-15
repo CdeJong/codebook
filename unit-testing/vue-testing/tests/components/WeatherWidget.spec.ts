@@ -78,6 +78,29 @@ describe('WeatherWidget', () => {
         expect(wrapper.findByDataTest('weather-error').text()).toContain(errorMessage);
     });
 
+    it('should render default error message on api reject when Error is not used', async () => {
+        // Arrange
+        const city = 'New York';
+        const errorMessage = '503 : Service Unavailable';
+        const defaultErrorMessage = 'Failed to fetch weather';
+        vi.mocked(fetchWeather).mockRejectedValue(errorMessage); // no Error
+
+        // Act
+        const wrapper = shallowMount(WeatherWidget, {
+            props: { city },
+        });
+
+        await flushPromises();
+
+        // Assert
+        expect(wrapper.findByDataTest('weather-loading').exists()).toBe(false);
+        expect(wrapper.findByDataTest('weather-empty').exists()).toBe(false);
+        expect(wrapper.findByDataTest('weather-data').exists()).toBe(false);
+
+        expect(wrapper.findByDataTest('weather-error').exists()).toBe(true);
+        expect(wrapper.findByDataTest('weather-error').text()).toContain(defaultErrorMessage);
+    });
+
     it('should fetch weather from the provided city', async () => {
         // Arrange
         const city = 'New York';
