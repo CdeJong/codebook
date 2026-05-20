@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="nl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Mijn Eerste Vibe</title>
+
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #f4f4f4;
+            }
+
+            h1 {
+                font-size: 3rem;
+                color: #333;
+                margin-bottom: 24px;
+            }
+
+            button {
+                padding: 20px 40px;
+                font-size: 1.5rem;
+                border: none;
+                border-radius: 12px;
+                background-color: #22c55e;
+                color: white;
+                cursor: pointer;
+                transition:
+                    background-color 0.2s,
+                    transform 0.2s;
+            }
+
+            button:hover {
+                background-color: #16a34a;
+                transform: scale(1.05);
+            }
+        </style>
+    </head>
+    <body>
+        <h1 id="titel">Hello World!</h1>
+
+        <button onclick="veranderTekst()">Klik mij</button>
+
+        <script>
+            function veranderTekst() {
+                document.getElementById('titel').textContent = 'Je hebt geklikt!';
+            }
+        </script>
+    </body>
+</html>
