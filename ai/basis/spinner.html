@@ -65,6 +65,36 @@
 
     #wheel-canvas.spinning { cursor: default; }
 
+    @keyframes wheel-pulse {
+      0%, 100% { box-shadow: 0 0 0 5px #fff, 0 8px 40px rgba(0,0,0,0.18); }
+      50%       { box-shadow: 0 0 0 5px #fff, 0 0 0 14px rgba(74,144,217,0.35), 0 8px 40px rgba(0,0,0,0.18); }
+    }
+
+    #wheel-canvas.ready { animation: wheel-pulse 2s ease-in-out infinite; }
+
+    .wheel-hint {
+      position: absolute;
+      bottom: -32px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #4a5568;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .wheel-hint.visible {
+      opacity: 1;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
     /* ── Sidebar ── */
     .sidebar {
       position: relative;
@@ -424,6 +454,7 @@
     <div class="wheel-scene">
       <div class="wheel-pointer">▼</div>
       <canvas id="wheel-canvas"></canvas>
+      <div class="wheel-hint" id="wheel-hint">Click to spin</div>
     </div>
   </div>
 
@@ -448,11 +479,11 @@
       <hr class="options-divider">
       <label class="option-row">
         <input type="checkbox" id="option-confetti" checked>
-        <span>Enable confetti</span>
+        <span>Confetti on win</span>
       </label>
       <label class="option-row">
         <input type="checkbox" id="option-background-color" checked>
-        <span>Enable color background</span>
+        <span>Rainbow background while spinning</span>
       </label>
     </div>
   </div>
@@ -532,10 +563,15 @@
     return valuesInput.value.split('\n').map(l => l.trim()).filter(Boolean);
   }
 
+  const wheelHint = document.getElementById('wheel-hint');
+
   function updateUI() {
     const n = getEntries().length;
     entryCountEl.textContent = n === 1 ? '1 entry' : `${n} entries`;
     buttonSpin.disabled = n === 0 || isSpinning;
+    const ready = n > 0 && !isSpinning;
+    wheelCanvas.classList.toggle('ready', ready);
+    wheelHint.classList.toggle('visible', ready);
   }
 
   function easeOutQuint(t) {
@@ -648,7 +684,7 @@
     spinDuration   = 4000 + Math.random() * 2000;
     spinStartTime  = null;
     isSpinning     = true;
-
+    updateUI();
     wheelCanvas.classList.add('spinning');
     buttonSpin.disabled = true;
     spinAnimId = requestAnimationFrame(animateSpin);
@@ -676,7 +712,7 @@
       currentAngle = spinEndAngle;
       isSpinning   = false;
       wheelCanvas.classList.remove('spinning');
-      buttonSpin.disabled = false;
+      updateUI();
       drawWheel();
       document.body.style.backgroundColor = '#f0f4f8';
       showWinner();
@@ -789,12 +825,16 @@
   const optionBackgroundColor  = document.getElementById('option-background-color');
 
   if (localStorage.getItem('spinner-confetti') === 'off') optionConfetti.checked = false;
-  if (localStorage.getItem('spinner-background-color')  === 'off') optionBackgroundColor.checked  = false;
+  if (localStorage.getItem('spinner-background-color') === 'off') optionBackgroundColor.checked = false;
 
-  optionConfetti.addEventListener('change', () =>
-    localStorage.setItem('spinner-confetti', optionConfetti.checked ? 'on' : 'off'));
-  optionBackgroundColor.addEventListener('change', () =>
-    localStorage.setItem('spinner-background-color', optionBackgroundColor.checked ? 'on' : 'off'));
+  optionConfetti.addEventListener('change', () => {
+    if (optionConfetti.checked) localStorage.removeItem('spinner-confetti');
+    else localStorage.setItem('spinner-confetti', 'off');
+  });
+  optionBackgroundColor.addEventListener('change', () => {
+    if (optionBackgroundColor.checked) localStorage.removeItem('spinner-background-color');
+    else localStorage.setItem('spinner-background-color', 'off');
+  });
 
   // ── Floating line-delete button ───────────────────────────────────────────────
 
@@ -843,6 +883,7 @@
   valuesInput.addEventListener('input', () => { saveValues(); updateUI(); drawWheel(); });
   buttonSpin.addEventListener('click', startSpin);
   wheelCanvas.addEventListener('click', () => { if (!isSpinning) startSpin(); });
+  wheelHint.addEventListener('click', () => { if (!isSpinning) startSpin(); });
 
   buttonShuffle.addEventListener('click', () => {
     const entries = getEntries();
