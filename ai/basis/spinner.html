@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spin the Wheel</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      height: 100dvh;
+      display: flex;
+      overflow: hidden;
+      transition: background-color 0.15s ease;
+    }
+
+    /* ── Layout ── */
+    .page {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    .wheel-side {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      min-width: 0;
+    }
+
+    /* ── Wheel ── */
+    .wheel-scene {
+      position: relative;
+      width: min(calc(100% - 64px), calc(100dvh - 48px));
+      max-width: 800px;
+      aspect-ratio: 1 / 1;
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem;
+      line-height: 1;
+      color: #1a202c;
+      z-index: 2;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+      pointer-events: none;
+      user-select: none;
+    }
+
+    #wheel-canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 0 5px #fff, 0 8px 40px rgba(0,0,0,0.18);
+      display: block;
+    }
+
+    #wheel-canvas.spinning { cursor: default; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: relative;
+      width: 300px;
+      flex-shrink: 0;
+      background: #fff;
+      box-shadow: -2px 0 16px rgba(0,0,0,0.07);
+      transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.collapsed {
+      margin-right: -300px;
+    }
+
+    .sidebar-content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 28px 20px 24px;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .sidebar-tab {
+      position: absolute;
+      left: -32px;
+      top: 24px;
+      width: 32px;
+      padding: 12px 0;
+      border: none;
+      border-radius: 8px 0 0 8px;
+      background: #fff;
+      box-shadow: -3px 0 10px rgba(0,0,0,0.12);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-family: inherit;
+      z-index: 1;
+      transition: background 0.15s;
+    }
+
+    .sidebar-tab:hover { background: #f7fafc; }
+
+    .sidebar-tab-arrow {
+      font-size: 18px;
+      font-weight: 700;
+      color: #4a5568;
+      line-height: 1;
+    }
+
+    .sidebar-tab-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #718096;
+    }
+
+    .sidebar-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1a202c;
+    }
+
+    .sidebar-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #718096;
+      margin-bottom: -4px;
+    }
+
+    .editor-wrap {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #values-input {
+      flex: 1;
+      min-height: 180px;
+      resize: none;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 8px;
+      padding: 10px 32px 10px 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: #2d3748;
+      line-height: 24px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #values-input:focus { border-color: #4a90d9; }
+
+    .line-delete-float {
+      position: absolute;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      border: none;
+      background: #fee2e2;
+      color: #e53e3e;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      z-index: 10;
+      transition: background 0.15s;
+    }
+
+    .line-delete-float:hover { background: #fca5a5; }
+
+    .entry-count {
+      font-size: 0.78rem;
+      color: #a0aec0;
+      text-align: right;
+      margin-top: -4px;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .button-secondary {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 8px;
+      background: none;
+      color: #4a5568;
+      font-size: 0.9rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .button-secondary:hover {
+      background: #f7fafc;
+      border-color: #a0aec0;
+    }
+
+    .button-spin-main {
+      width: 100%;
+      padding: 13px;
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: auto;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .button-spin-main:hover:not(:disabled) { background: #357abd; }
+    .button-spin-main:active:not(:disabled) { transform: scale(0.98); }
+    .button-spin-main:disabled { background: #cbd5e0; cursor: not-allowed; }
+
+    .options-divider {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 4px 0;
+    }
+
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .option-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #4a90d9;
+      flex-shrink: 0;
+    }
+
+    .option-row span {
+      font-size: 0.88rem;
+      color: #4a5568;
+    }
+
+    /* ── Confetti ── */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 70;
+    }
+
+    /* ── Winner overlay ── */
+    .winner-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+      cursor: pointer;
+    }
+
+    .winner-card { cursor: default; }
+
+    .winner-overlay.hidden { display: none; }
+
+    .winner-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px 32px 32px;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+      width: 90%;
+      max-width: 360px;
+      animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes pop-in {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .winner-emoji {
+      font-size: 3.5rem;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .winner-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #718096;
+      margin-bottom: 8px;
+    }
+
+    #winner-text {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 32px;
+      word-break: break-word;
+      line-height: 1.25;
+    }
+
+    .winner-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .button-winner-remove {
+      padding: 11px;
+      background: none;
+      color: #e53e3e;
+      border: 1.5px solid #e53e3e;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .button-winner-remove:hover {
+      background: #fff5f5;
+      color: #c53030;
+      border-color: #c53030;
+    }
+
+    .button-winner-spin {
+      padding: 11px;
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .button-winner-spin:hover { background: #357abd; }
+
+    .button-winner-close {
+      padding: 11px;
+      background: none;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: #718096;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .button-winner-close:hover { background: #f7fafc; }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      body { overflow-y: auto; height: auto; }
+
+      .page { flex-direction: column; height: auto; }
+
+      .wheel-side { padding: 24px 16px 16px; }
+
+      .wheel-scene { width: min(80vw, 340px); }
+
+      .sidebar {
+        width: 100%;
+        transform: none !important;
+        margin-right: 0 !important;
+        box-shadow: none;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .sidebar-content { padding: 20px 16px 32px; }
+
+      .sidebar-tab { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div id="winner-overlay" class="winner-overlay hidden">
+  <div class="winner-card">
+    <div class="winner-emoji">🎉</div>
+    <div class="winner-label">Winner</div>
+    <div id="winner-text">—</div>
+    <div class="winner-actions">
+      <button class="button-winner-remove" id="button-winner-remove">Remove &amp; spin again</button>
+      <button class="button-winner-spin" id="button-winner-spin">Spin again</button>
+      <button class="button-winner-close" id="button-winner-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="wheel-side">
+    <div class="wheel-scene">
+      <div class="wheel-pointer">▼</div>
+      <canvas id="wheel-canvas"></canvas>
+    </div>
+  </div>
+
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-tab" id="sidebar-tab">
+      <span class="sidebar-tab-arrow" id="sidebar-tab-arrow">›</span>
+      <span class="sidebar-tab-label">Options</span>
+    </button>
+    <div class="sidebar-content">
+      <div class="sidebar-title">Spin the Wheel</div>
+      <div class="sidebar-label">Values (one per line)</div>
+      <div class="editor-wrap">
+        <textarea id="values-input" placeholder="Option 1&#10;Option 2&#10;Option 3&#10;..."></textarea>
+        <button class="line-delete-float" id="line-delete-float" tabindex="-1">×</button>
+      </div>
+      <div class="entry-count" id="entry-count">0 entries</div>
+      <div class="row">
+        <button class="button-secondary" id="button-shuffle">Shuffle</button>
+        <button class="button-secondary" id="button-clear">Clear</button>
+      </div>
+      <button class="button-spin-main" id="button-spin" disabled>Spin!</button>
+      <hr class="options-divider">
+      <label class="option-row">
+        <input type="checkbox" id="option-confetti" checked>
+        <span>Enable confetti</span>
+      </label>
+      <label class="option-row">
+        <input type="checkbox" id="option-background-color" checked>
+        <span>Enable color background</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<script>
+  const COLORS = [
+    '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6',
+    '#1abc9c', '#e67e22', '#e91e63', '#00bcd4', '#8bc34a',
+    '#ff5722', '#607d8b',
+  ];
+
+  const CONF_COLORS = ['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#e91e63','#1abc9c','#ff5722'];
+
+  const wheelCanvas      = document.getElementById('wheel-canvas');
+  const ctx              = wheelCanvas.getContext('2d');
+  const valuesInput      = document.getElementById('values-input');
+  const entryCountEl     = document.getElementById('entry-count');
+  const buttonSpin       = document.getElementById('button-spin');
+  const buttonShuffle    = document.getElementById('button-shuffle');
+  const buttonClear      = document.getElementById('button-clear');
+  const winnerOverlay    = document.getElementById('winner-overlay');
+  const winnerText       = document.getElementById('winner-text');
+  const btnWinnerRemove  = document.getElementById('button-winner-remove');
+  const btnWinnerSpin    = document.getElementById('button-winner-spin');
+  const btnWinnerClose   = document.getElementById('button-winner-close');
+  const confettiCanvas   = document.getElementById('confetti-canvas');
+  const confCtx          = confettiCanvas.getContext('2d');
+  const lineDeleteFloat  = document.getElementById('line-delete-float');
+  const sidebar          = document.getElementById('sidebar');
+  const sidebarTab       = document.getElementById('sidebar-tab');
+  const sidebarTabArrow  = document.getElementById('sidebar-tab-arrow');
+
+  if (localStorage.getItem('spinner-sidebar') === 'collapsed') {
+    sidebar.style.transition = 'none';
+    sidebar.classList.add('collapsed');
+    sidebarTabArrow.textContent = '‹';
+    sidebar.offsetHeight; // force reflow before re-enabling transition
+    sidebar.style.transition = '';
+  }
+
+  sidebarTab.addEventListener('click', () => {
+    const collapsed = sidebar.classList.toggle('collapsed');
+    sidebarTabArrow.textContent = collapsed ? '‹' : '›';
+    localStorage.setItem('spinner-sidebar', collapsed ? 'collapsed' : 'open');
+  });
+
+  let logicalSize     = 500;
+
+  function resizeWheel() {
+    const dpr     = window.devicePixelRatio || 1;
+    const cssSize = wheelCanvas.getBoundingClientRect().width;
+    if (cssSize === 0) return;
+    logicalSize         = cssSize;
+    wheelCanvas.width   = Math.round(cssSize * dpr);
+    wheelCanvas.height  = Math.round(cssSize * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawWheel();
+  }
+
+  window.addEventListener('resize', resizeWheel);
+
+  let currentAngle    = 0;
+  let isSpinning      = false;
+  let spinAnimId      = null;
+  let spinStartTime   = null;
+  let spinStartAngle  = 0;
+  let spinEndAngle    = 0;
+  let spinDuration    = 0;
+  let winnerIndex     = -1;
+  let confettiParticles = [];
+  let confettiAnimId  = null;
+  let backgroundHue           = 0;
+  let lastBackgroundStep      = 0;
+
+  function getEntries() {
+    return valuesInput.value.split('\n').map(l => l.trim()).filter(Boolean);
+  }
+
+  function updateUI() {
+    const n = getEntries().length;
+    entryCountEl.textContent = n === 1 ? '1 entry' : `${n} entries`;
+    buttonSpin.disabled = n === 0 || isSpinning;
+  }
+
+  function easeOutQuint(t) {
+    return 1 - Math.pow(1 - t, 5);
+  }
+
+  // ── Wheel drawing ────────────────────────────────────────────────────────────
+
+  function drawWheel() {
+    const entries = getEntries();
+    const n = entries.length;
+    const size = logicalSize;
+    const cx = size / 2, cy = size / 2;
+    const radius = cx - 4;
+
+    ctx.clearRect(0, 0, size, size);
+
+    if (n === 0) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = '#e2e8f0';
+      ctx.fill();
+      ctx.fillStyle = '#a0aec0';
+      ctx.font = 'bold 18px Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Add entries to spin', cx, cy);
+      return;
+    }
+
+    const segAngle = (2 * Math.PI) / n;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(currentAngle);
+
+    for (let i = 0; i < n; i++) {
+      const startA = i * segAngle;
+      const endA   = startA + segAngle;
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, radius, startA, endA);
+      ctx.closePath();
+      ctx.fillStyle = COLORS[i % COLORS.length];
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.save();
+      ctx.rotate(startA + segAngle / 2);
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#fff';
+      ctx.shadowColor = 'rgba(0,0,0,0.4)';
+      ctx.shadowBlur = 4;
+      const fontSize = Math.max(10, Math.min(18, radius * segAngle * 0.22));
+      ctx.font = `bold ${fontSize}px Segoe UI, sans-serif`;
+      const label = entries[i].length > 24 ? entries[i].slice(0, 22) + '…' : entries[i];
+      ctx.fillText(label, radius - 20, 0);
+      ctx.restore();
+    }
+
+    ctx.restore();
+
+    // Outer ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Center pin
+    ctx.beginPath();
+    ctx.arc(cx, cy, 16, 0, 2 * Math.PI);
+    ctx.fillStyle = '#fff';
+    ctx.shadowColor = 'rgba(0,0,0,0.2)';
+    ctx.shadowBlur = 6;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+    ctx.fillStyle = '#718096';
+    ctx.fill();
+  }
+
+  // ── Spin ─────────────────────────────────────────────────────────────────────
+
+  function startSpin() {
+    const entries = getEntries();
+    if (entries.length === 0 || isSpinning) return;
+
+    const n = entries.length;
+    winnerIndex = Math.floor(Math.random() * n);
+
+    const segAngle  = (2 * Math.PI) / n;
+    const winnerMid = winnerIndex * segAngle + segAngle / 2;
+
+    // Rotate so the winner's midpoint lands at the top pointer (-π/2)
+    let delta = (-Math.PI / 2) - (currentAngle + winnerMid);
+    delta = ((delta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+
+    spinStartAngle = currentAngle;
+    spinEndAngle   = currentAngle + delta + (6 + Math.floor(Math.random() * 4)) * 2 * Math.PI;
+    spinDuration   = 4000 + Math.random() * 2000;
+    spinStartTime  = null;
+    isSpinning     = true;
+
+    wheelCanvas.classList.add('spinning');
+    buttonSpin.disabled = true;
+    spinAnimId = requestAnimationFrame(animateSpin);
+  }
+
+  function animateSpin(ts) {
+    if (!spinStartTime) spinStartTime = ts;
+    const progress = Math.min((ts - spinStartTime) / spinDuration, 1);
+    currentAngle = spinStartAngle + (spinEndAngle - spinStartAngle) * easeOutQuint(progress);
+    drawWheel();
+
+    // Cycle background hue — speed proportional to how fast the wheel is spinning
+    if (optionBackgroundColor && optionBackgroundColor.checked) {
+      const velocity = 1 - easeOutQuint(progress);
+      if (ts - lastBackgroundStep > 16) {
+        backgroundHue = (backgroundHue + 3 + velocity * 6) % 360;
+        document.body.style.backgroundColor = `hsl(${backgroundHue}, 85%, 62%)`;
+        lastBackgroundStep = ts;
+      }
+    }
+
+    if (progress < 1) {
+      spinAnimId = requestAnimationFrame(animateSpin);
+    } else {
+      currentAngle = spinEndAngle;
+      isSpinning   = false;
+      wheelCanvas.classList.remove('spinning');
+      buttonSpin.disabled = false;
+      drawWheel();
+      document.body.style.backgroundColor = '#f0f4f8';
+      showWinner();
+    }
+  }
+
+  // ── Winner ───────────────────────────────────────────────────────────────────
+
+  function showWinner() {
+    winnerText.textContent = getEntries()[winnerIndex];
+    winnerOverlay.classList.remove('hidden');
+    if (optionConfetti.checked) startConfetti();
+  }
+
+  function closeWinner() {
+    winnerOverlay.classList.add('hidden');
+    stopConfetti();
+  }
+
+  btnWinnerClose.addEventListener('click', closeWinner);
+
+  winnerOverlay.addEventListener('click', (e) => {
+    if (e.target === winnerOverlay) closeWinner();
+  });
+
+  btnWinnerSpin.addEventListener('click', () => {
+    winnerOverlay.classList.add('hidden');
+    stopConfetti();
+    setTimeout(startSpin, 200);
+  });
+
+  btnWinnerRemove.addEventListener('click', () => {
+    const entries = getEntries();
+    entries.splice(winnerIndex, 1);
+    valuesInput.value = entries.join('\n');
+    updateUI();
+    drawWheel();
+    winnerOverlay.classList.add('hidden');
+    stopConfetti();
+    if (entries.length > 0) setTimeout(startSpin, 200);
+  });
+
+  // ── Confetti ─────────────────────────────────────────────────────────────────
+
+  function resizeConfetti() {
+    confettiCanvas.width  = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeConfetti);
+  resizeConfetti();
+
+  function startConfetti() {
+    confettiParticles = Array.from({ length: 140 }, () => ({
+      x:     Math.random() * confettiCanvas.width,
+      y:     -20 - Math.random() * 200,
+      w:     6 + Math.random() * 8,
+      h:     4 + Math.random() * 5,
+      color: CONF_COLORS[Math.floor(Math.random() * CONF_COLORS.length)],
+      rot:   Math.random() * Math.PI * 2,
+      rotV:  (Math.random() - 0.5) * 0.12,
+      vx:    (Math.random() - 0.5) * 2,
+      vy:    2 + Math.random() * 3,
+      alpha: 1,
+    }));
+    confettiAnimId = requestAnimationFrame(animateConfetti);
+  }
+
+  function animateConfetti() {
+    confCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    let alive = false;
+
+    for (const p of confettiParticles) {
+      p.x   += p.vx;
+      p.y   += p.vy;
+      p.rot += p.rotV;
+      if (p.y > confettiCanvas.height * 0.65) p.alpha -= 0.025;
+      if (p.alpha <= 0) continue;
+      alive = true;
+      confCtx.save();
+      confCtx.globalAlpha = p.alpha;
+      confCtx.translate(p.x, p.y);
+      confCtx.rotate(p.rot);
+      confCtx.fillStyle = p.color;
+      confCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      confCtx.restore();
+    }
+
+    if (alive) confettiAnimId = requestAnimationFrame(animateConfetti);
+  }
+
+  function stopConfetti() {
+    if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+    confettiAnimId = null;
+    confCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    confettiParticles = [];
+  }
+
+  // ── localStorage ─────────────────────────────────────────────────────────────
+
+  function saveValues() {
+    localStorage.setItem('spinner-values', valuesInput.value);
+  }
+
+  const saved = localStorage.getItem('spinner-values');
+  if (saved !== null) valuesInput.value = saved;
+
+  // ── Checkboxes ────────────────────────────────────────────────────────────────
+
+  const optionConfetti = document.getElementById('option-confetti');
+  const optionBackgroundColor  = document.getElementById('option-background-color');
+
+  if (localStorage.getItem('spinner-confetti') === 'off') optionConfetti.checked = false;
+  if (localStorage.getItem('spinner-background-color')  === 'off') optionBackgroundColor.checked  = false;
+
+  optionConfetti.addEventListener('change', () =>
+    localStorage.setItem('spinner-confetti', optionConfetti.checked ? 'on' : 'off'));
+  optionBackgroundColor.addEventListener('change', () =>
+    localStorage.setItem('spinner-background-color', optionBackgroundColor.checked ? 'on' : 'off'));
+
+  // ── Floating line-delete button ───────────────────────────────────────────────
+
+  const LINE_HEIGHT  = 24;
+  const PAD_TOP      = 10;
+  let hoveredLine    = -1;
+
+  function getHoveredLine(e) {
+    const rect  = valuesInput.getBoundingClientRect();
+    const relY  = e.clientY - rect.top + valuesInput.scrollTop - PAD_TOP;
+    return Math.floor(relY / LINE_HEIGHT);
+  }
+
+  function showFloat(index) {
+    const entries = getEntries();
+    if (index < 0 || index >= entries.length) { hideFloat(); return; }
+    hoveredLine = index;
+    const top = PAD_TOP + index * LINE_HEIGHT - valuesInput.scrollTop + (LINE_HEIGHT - 20) / 2;
+    lineDeleteFloat.style.top    = `${top}px`;
+    lineDeleteFloat.style.display = 'flex';
+  }
+
+  function hideFloat() {
+    lineDeleteFloat.style.display = 'none';
+    hoveredLine = -1;
+  }
+
+  valuesInput.addEventListener('mousemove',  (e) => showFloat(getHoveredLine(e)));
+  valuesInput.addEventListener('scroll',     () => showFloat(hoveredLine));
+  valuesInput.addEventListener('mouseleave', () => { if (!lineDeleteFloat.matches(':hover')) hideFloat(); });
+  lineDeleteFloat.addEventListener('mouseleave', hideFloat);
+
+  lineDeleteFloat.addEventListener('click', () => {
+    if (hoveredLine < 0) return;
+    const entries = getEntries();
+    entries.splice(hoveredLine, 1);
+    valuesInput.value = entries.join('\n');
+    saveValues();
+    updateUI();
+    drawWheel();
+    hideFloat();
+  });
+
+  // ── Events ───────────────────────────────────────────────────────────────────
+
+  valuesInput.addEventListener('input', () => { saveValues(); updateUI(); drawWheel(); });
+  buttonSpin.addEventListener('click', startSpin);
+  wheelCanvas.addEventListener('click', () => { if (!isSpinning) startSpin(); });
+
+  buttonShuffle.addEventListener('click', () => {
+    const entries = getEntries();
+    for (let i = entries.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [entries[i], entries[j]] = [entries[j], entries[i]];
+    }
+    valuesInput.value = entries.join('\n');
+    saveValues();
+    updateUI();
+    drawWheel();
+  });
+
+  buttonClear.addEventListener('click', () => {
+    valuesInput.value = '';
+    saveValues();
+    updateUI();
+    drawWheel();
+  });
+
+  resizeWheel();
+  updateUI();
+</script>
+</body>
+</html>
