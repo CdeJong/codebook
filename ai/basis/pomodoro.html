@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pomodoro</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      min-height: 100dvh;
+      overflow: hidden;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100dvh;
+    }
+
+    .main-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Session counter */
+    .session-counter {
+      position: fixed;
+      top: 20px;
+      left: 24px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.85rem;
+      color: #718096;
+      z-index: 10;
+    }
+
+    .session-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #4a90d9;
+      flex-shrink: 0;
+      transition: background 0.5s;
+    }
+
+    /* Timer */
+    .container {
+      text-align: center;
+      padding: 48px 32px;
+    }
+
+    .timer-display {
+      font-size: 7rem;
+      font-weight: 200;
+      letter-spacing: -0.02em;
+      color: #1a202c;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 28px;
+      transition: color 0.5s;
+    }
+
+    @keyframes timer-pop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .timer-display.pop {
+      animation: timer-pop 0.45s ease-out;
+    }
+
+    .status-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #4a90d9;
+      margin-bottom: 8px;
+      transition: color 0.5s;
+    }
+
+    .message {
+      font-size: 0.95rem;
+      color: #718096;
+      margin-bottom: 44px;
+      min-height: 1.4em;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .button-start {
+      padding: 12px 44px;
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .button-start:hover {
+      background: #357abd;
+    }
+
+    .button-pause {
+      padding: 12px 28px;
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .button-pause:hover {
+      background: #357abd;
+    }
+
+    .button-reset {
+      padding: 12px 28px;
+      background: none;
+      color: #718096;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .button-reset:hover {
+      color: #c53030;
+      border-color: #c53030;
+      background: #fff5f5;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: relative;
+      width: 260px;
+      flex-shrink: 0;
+      background: #fff;
+      box-shadow: -2px 0 16px rgba(0, 0, 0, 0.07);
+      transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar.collapsed {
+      margin-right: -260px;
+    }
+
+    .sidebar-tab {
+      position: absolute;
+      left: -28px;
+      top: 24px;
+      width: 28px;
+      padding: 12px 0;
+      background: #fff;
+      border-radius: 8px 0 0 8px;
+      box-shadow: -3px 0 10px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #718096;
+      font-size: 1.1rem;
+      transition: color 0.15s, background 0.15s;
+      user-select: none;
+    }
+
+    .sidebar-tab:hover {
+      color: #2d3748;
+      background: #f7fafc;
+    }
+
+    .sidebar-tab-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #a0aec0;
+      transition: color 0.15s;
+    }
+
+    .sidebar-tab:hover .sidebar-tab-label {
+      color: #718096;
+    }
+
+    .sidebar-content {
+      padding: 28px 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .sidebar-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #a0aec0;
+      margin-bottom: 20px;
+    }
+
+    .option-group {
+      margin-bottom: 18px;
+    }
+
+    .option-group-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 8px;
+    }
+
+    .time-pills {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .time-pill {
+      padding: 5px 11px;
+      border-radius: 99px;
+      border: 1.5px solid #cbd5e0;
+      background: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #718096;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .time-pill:hover {
+      background: #f0f4f8;
+      color: #2d3748;
+    }
+
+    .time-pill.active {
+      background: #ebf4ff;
+      color: #2b6cb0;
+      border-color: #bee3f8;
+    }
+
+    .custom-input-row {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .custom-input-row input[type="number"] {
+      width: 60px;
+      padding: 5px 8px;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      text-align: center;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .custom-input-row input[type="number"]::-webkit-inner-spin-button,
+    .custom-input-row input[type="number"]::-webkit-outer-spin-button {
+      opacity: 1;
+    }
+
+    .custom-input-row input[type="number"]:focus {
+      border-color: #4a90d9;
+    }
+
+    .custom-input-row span {
+      font-size: 0.82rem;
+      color: #718096;
+    }
+
+    .sidebar-divider {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 16px 0 20px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #4a5568;
+      cursor: pointer;
+      padding: 2px 0;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #4a90d9;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .notification-note {
+      font-size: 0.78rem;
+      color: #e53e3e;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .notification-note.visible {
+      display: block;
+    }
+
+    .button-sidebar-action {
+      background: none;
+      border: none;
+      font-size: 0.82rem;
+      color: #a0aec0;
+      cursor: pointer;
+      padding: 2px 0;
+      font-family: inherit;
+      transition: color 0.2s;
+      text-align: left;
+    }
+
+    .button-sidebar-action:hover {
+      color: #e53e3e;
+    }
+
+    /* Overlays */
+    .ripple-overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #68d391;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0);
+      z-index: 1;
+    }
+
+    @keyframes ripple-expand {
+      0%   { transform: translate(-50%, -50%) scale(0); opacity: 0.5; }
+      100% { transform: translate(-50%, -50%) scale(30); opacity: 0; }
+    }
+
+    .ripple-overlay.active {
+      animation: ripple-expand 1.7s cubic-bezier(0.2, 0, 0.7, 1) forwards;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .overlay.hidden {
+      display: none;
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      padding: 28px 28px 24px;
+      width: 90%;
+      max-width: 340px;
+    }
+
+    .modal p {
+      color: #2d3748;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .button-cancel {
+      padding: 8px 16px;
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .button-cancel:hover {
+      background: #357abd;
+    }
+
+    .button-confirm-reset {
+      padding: 8px 16px;
+      background: none;
+      color: #e53e3e;
+      border: 1.5px solid #e53e3e;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .button-confirm-reset:hover {
+      background: #fff5f5;
+      color: #c53030;
+      border-color: #c53030;
+    }
+
+    @media (max-width: 480px) {
+      .timer-display { font-size: 5rem; }
+      .container { padding: 32px 16px; }
+      .sidebar { width: 240px; }
+      .sidebar.collapsed { margin-right: -240px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ripple-overlay" id="ripple-overlay"></div>
+
+  <div id="confirm-overlay" class="overlay hidden">
+    <div class="modal">
+      <p></p>
+      <div class="modal-actions">
+        <button class="button-cancel" id="confirm-cancel">Cancel</button>
+        <button class="button-confirm-reset" id="confirm-ok">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="session-counter">
+    <div class="session-dot" id="session-dot"></div>
+    <span id="session-count-text">0 sessions</span>
+  </div>
+
+  <div class="layout">
+    <div class="main-area">
+      <div class="container">
+        <div class="timer-display" id="timer-display">25:00</div>
+        <div class="status-label" id="status-label">Work</div>
+        <div class="message" id="message">Ready to focus?</div>
+        <div class="button-row" id="button-row"></div>
+      </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-tab" id="sidebar-tab">
+        <span id="sidebar-tab-arrow">›</span>
+        <span class="sidebar-tab-label">Options</span>
+      </div>
+      <div class="sidebar-content">
+        <div class="sidebar-title">Settings</div>
+
+        <div class="option-group">
+          <div class="option-group-label">Work time</div>
+          <div class="time-pills" id="work-pills">
+            <button class="time-pill" data-minutes="25">25 min</button>
+            <button class="time-pill" data-minutes="15">15 min</button>
+            <button class="time-pill" data-minutes="10">10 min</button>
+          </div>
+          <div class="custom-input-row">
+            <input type="number" id="work-custom-input" min="1" max="180">
+            <span>min</span>
+          </div>
+        </div>
+
+        <div class="option-group">
+          <div class="option-group-label">Break time</div>
+          <div class="time-pills" id="break-pills">
+            <button class="time-pill" data-minutes="1">1 min</button>
+            <button class="time-pill" data-minutes="5">5 min</button>
+            <button class="time-pill" data-minutes="10">10 min</button>
+          </div>
+          <div class="custom-input-row">
+            <input type="number" id="break-custom-input" min="1" max="60">
+            <span>min</span>
+          </div>
+        </div>
+
+        <hr class="sidebar-divider">
+
+        <div class="option-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="option-animation">
+            Break animation
+          </label>
+        </div>
+
+        <div class="option-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="option-notifications">
+            Push notifications
+          </label>
+          <div class="notification-note" id="notification-note"></div>
+        </div>
+
+        <hr class="sidebar-divider">
+
+        <div class="option-group">
+          <button class="button-sidebar-action" id="button-reset-times">Reset times to default</button>
+        </div>
+        <div class="option-group">
+          <button class="button-sidebar-action" id="button-reset-sessions">Reset session counter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Settings ───────────────────────────────────────────────────────────────
+    let workMinutes = parseInt(localStorage.getItem('pomodoro-work-minutes') || '25', 10);
+    let breakMinutes = parseInt(localStorage.getItem('pomodoro-break-minutes') || '5', 10);
+    let optionAnimation = localStorage.getItem('pomodoro-animation') !== 'off';
+    let optionNotifications = localStorage.getItem('pomodoro-notifications') === 'on';
+
+    // ── Timer state ────────────────────────────────────────────────────────────
+    let mode = 'work';
+    let timerState = 'idle';
+    let secondsLeft = workMinutes * 60;
+    let completedSessions = parseInt(localStorage.getItem('pomodoro-sessions') || '0', 10);
+    let intervalId = null;
+
+    // ── DOM refs ───────────────────────────────────────────────────────────────
+    const timerDisplay = document.getElementById('timer-display');
+    const statusLabel = document.getElementById('status-label');
+    const messageEl = document.getElementById('message');
+    const buttonRow = document.getElementById('button-row');
+    const sessionCountText = document.getElementById('session-count-text');
+    const sessionDot = document.getElementById('session-dot');
+    const rippleOverlay = document.getElementById('ripple-overlay');
+    const confirmOverlay = document.getElementById('confirm-overlay');
+    const confirmOk = document.getElementById('confirm-ok');
+    const confirmCancel = document.getElementById('confirm-cancel');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarTab = document.getElementById('sidebar-tab');
+    const sidebarTabArrow = document.getElementById('sidebar-tab-arrow');
+    const workCustomInput = document.getElementById('work-custom-input');
+    const breakCustomInput = document.getElementById('break-custom-input');
+    const optionAnimationCheckbox = document.getElementById('option-animation');
+    const optionNotificationsCheckbox = document.getElementById('option-notifications');
+    const notificationNote = document.getElementById('notification-note');
+
+    // ── Confirm modal ──────────────────────────────────────────────────────────
+    const modalMessage = confirmOverlay.querySelector('.modal p');
+    let pendingAction = null;
+
+    confirmOverlay.addEventListener('click', (e) => { if (e.target === confirmOverlay) hideConfirm(); });
+    confirmCancel.addEventListener('click', hideConfirm);
+    confirmOk.addEventListener('click', () => { const action = pendingAction; hideConfirm(); if (action) action(); });
+
+    function showConfirm(message, action) {
+      modalMessage.textContent = message;
+      pendingAction = action;
+      confirmOverlay.classList.remove('hidden');
+    }
+
+    function hideConfirm() {
+      pendingAction = null;
+      confirmOverlay.classList.add('hidden');
+    }
+
+    // ── Sidebar ────────────────────────────────────────────────────────────────
+    if (localStorage.getItem('pomodoro-sidebar') === 'collapsed') {
+      sidebar.style.transition = 'none';
+      sidebar.classList.add('collapsed');
+      sidebarTabArrow.textContent = '‹';
+      sidebar.offsetHeight;
+      sidebar.style.transition = '';
+    }
+
+    sidebarTab.addEventListener('click', () => {
+      const isCollapsed = sidebar.classList.toggle('collapsed');
+      sidebarTabArrow.textContent = isCollapsed ? '‹' : '›';
+      if (isCollapsed) {
+        localStorage.setItem('pomodoro-sidebar', 'collapsed');
+      } else {
+        localStorage.removeItem('pomodoro-sidebar');
+      }
+    });
+
+    // ── Time options ───────────────────────────────────────────────────────────
+    const WORK_PRESETS = [25, 15, 10];
+    const BREAK_PRESETS = [5, 10];
+
+    function initTimePills(pillsId, customInput, getMinutes, setMinutes) {
+      const container = document.getElementById(pillsId);
+      const pills = container.querySelectorAll('.time-pill');
+
+      function refresh(currentMinutes) {
+        pills.forEach(pill => {
+          pill.classList.toggle('active', parseInt(pill.dataset.minutes, 10) === currentMinutes);
+        });
+        customInput.value = currentMinutes;
+      }
+
+      pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          setMinutes(parseInt(pill.dataset.minutes, 10));
+          refresh(getMinutes());
+        });
+      });
+
+      customInput.addEventListener('change', () => {
+        const val = Math.max(1, parseInt(customInput.value, 10) || 1);
+        customInput.value = val;
+        setMinutes(val);
+        refresh(val);
+      });
+
+      refresh(getMinutes());
+      return refresh;
+    }
+
+    function setWorkMinutes(minutes) {
+      workMinutes = minutes;
+      localStorage.setItem('pomodoro-work-minutes', minutes);
+      if (mode === 'work' && timerState === 'idle') {
+        secondsLeft = workMinutes * 60;
+        updateDisplay();
+      }
+    }
+
+    function setBreakMinutes(minutes) {
+      breakMinutes = minutes;
+      localStorage.setItem('pomodoro-break-minutes', minutes);
+      if (mode === 'break' && timerState === 'idle') {
+        secondsLeft = breakMinutes * 60;
+        updateDisplay();
+      }
+    }
+
+    const refreshWorkPills = initTimePills('work-pills', workCustomInput, () => workMinutes, setWorkMinutes);
+    const refreshBreakPills = initTimePills('break-pills', breakCustomInput, () => breakMinutes, setBreakMinutes);
+
+    document.getElementById('button-reset-times').addEventListener('click', () => {
+      showConfirm('Reset work time to 25 min and break time to 5 min?', () => {
+        setWorkMinutes(25);
+        setBreakMinutes(5);
+        refreshWorkPills(25);
+        refreshBreakPills(5);
+      });
+    });
+
+    document.getElementById('button-reset-sessions').addEventListener('click', () => {
+      showConfirm('Reset the session counter to 0?', () => {
+        completedSessions = 0;
+        localStorage.removeItem('pomodoro-sessions');
+        updateDisplay();
+      });
+    });
+
+    // ── Checkboxes ─────────────────────────────────────────────────────────────
+    optionAnimationCheckbox.checked = optionAnimation;
+    optionAnimationCheckbox.addEventListener('change', () => {
+      optionAnimation = optionAnimationCheckbox.checked;
+      if (optionAnimation) {
+        localStorage.removeItem('pomodoro-animation');
+      } else {
+        localStorage.setItem('pomodoro-animation', 'off');
+      }
+    });
+
+    optionNotificationsCheckbox.checked = optionNotifications;
+
+    // Revoke stored preference if permission was revoked since last visit
+    if (optionNotifications && (!('Notification' in window) || Notification.permission !== 'granted')) {
+      optionNotifications = false;
+      optionNotificationsCheckbox.checked = false;
+      localStorage.removeItem('pomodoro-notifications');
+    }
+
+    optionNotificationsCheckbox.addEventListener('change', async () => {
+      if (!optionNotificationsCheckbox.checked) {
+        optionNotifications = false;
+        localStorage.removeItem('pomodoro-notifications');
+        notificationNote.classList.remove('visible');
+        return;
+      }
+      if (!('Notification' in window)) {
+        optionNotificationsCheckbox.checked = false;
+        notificationNote.textContent = 'Not supported in this browser.';
+        notificationNote.classList.add('visible');
+        return;
+      }
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        optionNotifications = true;
+        localStorage.setItem('pomodoro-notifications', 'on');
+        notificationNote.classList.remove('visible');
+      } else {
+        optionNotificationsCheckbox.checked = false;
+        optionNotifications = false;
+        notificationNote.textContent = 'Permission denied. Enable notifications in your browser settings.';
+        notificationNote.classList.add('visible');
+      }
+    });
+
+    function sendNotification(title, body) {
+      if (optionNotifications && 'Notification' in window && Notification.permission === 'granted') {
+        new Notification(title, { body });
+      }
+    }
+
+    // ── Timer ──────────────────────────────────────────────────────────────────
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const secs = (seconds % 60).toString().padStart(2, '0');
+      return `${minutes}:${secs}`;
+    }
+
+    function updateTimerText() {
+      timerDisplay.textContent = formatTime(secondsLeft);
+      document.title = timerState === 'idle' ? 'Pomodoro' : `${formatTime(secondsLeft)} — Pomodoro`;
+    }
+
+    function updateDisplay() {
+      updateTimerText();
+
+      if (mode === 'work') {
+        statusLabel.textContent = 'Work';
+        statusLabel.style.color = '#4a90d9';
+        timerDisplay.style.color = '#1a202c';
+        sessionDot.style.background = '#4a90d9';
+        if (timerState === 'idle') {
+          messageEl.textContent = 'Ready to focus?';
+        } else if (timerState === 'running') {
+          messageEl.textContent = 'Stay focused, you\'ve got this.';
+        } else {
+          messageEl.textContent = 'Paused. Take a breath.';
+        }
+      } else {
+        statusLabel.textContent = 'Break';
+        statusLabel.style.color = '#38a169';
+        timerDisplay.style.color = '#276749';
+        sessionDot.style.background = '#38a169';
+        if (timerState === 'running') {
+          messageEl.textContent = 'Take a break, you earned it!';
+        } else {
+          messageEl.textContent = 'Break paused.';
+        }
+      }
+
+      sessionCountText.textContent = completedSessions === 1 ? '1 session' : `${completedSessions} sessions`;
+
+      renderButtons();
+    }
+
+    function renderButtons() {
+      buttonRow.innerHTML = '';
+
+      if (timerState === 'idle') {
+        const startButton = document.createElement('button');
+        startButton.className = 'button-start';
+        startButton.textContent = 'Start';
+        startButton.addEventListener('click', startTimer);
+        buttonRow.appendChild(startButton);
+      } else {
+        const pauseButton = document.createElement('button');
+        pauseButton.className = 'button-pause';
+        pauseButton.textContent = timerState === 'running' ? 'Pause' : 'Resume';
+        pauseButton.addEventListener('click', togglePause);
+        buttonRow.appendChild(pauseButton);
+
+        const resetButton = document.createElement('button');
+        resetButton.className = 'button-reset';
+        resetButton.textContent = 'Reset';
+        resetButton.addEventListener('click', () => {
+          if (timerState === 'running') {
+            timerState = 'paused';
+            clearInterval(intervalId);
+            intervalId = null;
+            updateDisplay();
+          }
+          showConfirm('Are you sure you want to reset the timer?', resetTimer);
+        });
+        buttonRow.appendChild(resetButton);
+      }
+    }
+
+    function playBreakAnimation() {
+      if (!optionAnimation) return;
+      rippleOverlay.classList.remove('active');
+      rippleOverlay.offsetHeight;
+      rippleOverlay.classList.add('active');
+
+      timerDisplay.classList.remove('pop');
+      timerDisplay.offsetHeight;
+      timerDisplay.classList.add('pop');
+    }
+
+    function startTimer() {
+      timerState = 'running';
+      updateDisplay();
+      intervalId = setInterval(tick, 1000);
+    }
+
+    function togglePause() {
+      if (timerState === 'running') {
+        timerState = 'paused';
+        clearInterval(intervalId);
+        intervalId = null;
+      } else if (timerState === 'paused') {
+        timerState = 'running';
+        intervalId = setInterval(tick, 1000);
+      }
+      updateDisplay();
+    }
+
+    function resetTimer() {
+      clearInterval(intervalId);
+      intervalId = null;
+      mode = 'work';
+      timerState = 'idle';
+      secondsLeft = workMinutes * 60;
+      updateDisplay();
+    }
+
+    function tick() {
+      secondsLeft--;
+      if (secondsLeft <= 0) {
+        secondsLeft = 0;
+        updateTimerText();
+        handleTimerEnd();
+        return;
+      }
+      updateTimerText();
+    }
+
+    function handleTimerEnd() {
+      clearInterval(intervalId);
+      intervalId = null;
+
+      if (mode === 'work') {
+        completedSessions++;
+        localStorage.setItem('pomodoro-sessions', completedSessions);
+        sendNotification('Time for a break!', `Work session complete. Enjoy ${breakMinutes} ${breakMinutes === 1 ? 'minute' : 'minutes'}.`);
+        mode = 'break';
+        secondsLeft = breakMinutes * 60;
+        timerState = 'running';
+        playBreakAnimation();
+        intervalId = setInterval(tick, 1000);
+      } else {
+        sendNotification('Back to work!', 'Break is over. Stay focused!');
+        mode = 'work';
+        timerState = 'idle';
+        secondsLeft = workMinutes * 60;
+      }
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
+</body>
+</html>
